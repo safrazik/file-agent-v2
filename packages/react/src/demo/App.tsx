@@ -66,7 +66,7 @@ export default function DemoApp() {
       setFileRecords(fileRecords);
       setTimeout(() => {
         setTimeout(() => {
-          fileRecords[0].progress(34);
+          fileRecords[0].setProgress(34);
           fileRecords[0].setError('Custom Error test');
         }, 2000);
         setFileRecords(fileRecords.reverse().concat([]));
@@ -96,6 +96,7 @@ export default function DemoApp() {
         </div>
         <FileAgent
           {...{
+            auto: false,
             uploadUrl: 'https://master.tus.io/files/',
             resumable: true,
             multiple: true,
@@ -126,7 +127,7 @@ export default function DemoApp() {
             onRename: function (fileRecord) {
               console.log('onRename', fileRecord.name(), fileRecord);
               if (fileRecord.name().toLowerCase().indexOf('shit') === -1) {
-                return;
+                return true;
               }
               fileRecord.setError('Shitty name is not allowed.');
               return new Promise(function (resolve, reject) {
@@ -138,7 +139,7 @@ export default function DemoApp() {
             onDelete: function (fileRecord) {
               console.log('onDelete', fileRecord.name(), fileRecord);
               if (fileRecord.name().toLowerCase().indexOf('system') === -1) {
-                return;
+                return true;
               }
               return new Promise(function (resolve, reject) {
                 setTimeout(function () {
@@ -146,6 +147,9 @@ export default function DemoApp() {
                   resolve(false);
                 }, 1000);
               });
+            },
+            onInput(fileRecords) {
+              console.log('haha all', fileRecords);
             },
             // },
             // slots: {
