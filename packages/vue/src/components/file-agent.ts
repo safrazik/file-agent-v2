@@ -23,7 +23,6 @@ export default Vue.extend({
     renderCore() {
       if (this.coreFileAgent) {
         this.coreFileAgent.setProps(this.$props as FileAgentProps);
-        this.coreFileAgent.update();
         return;
       }
       if (!this.$el) {

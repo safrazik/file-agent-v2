@@ -21,6 +21,7 @@
         :deletable="settings.deletable"
         :editable="settings.editable"
         :linkable="true"
+        :sortable="true"
       ></FileAgent>
       <h3>File Previews</h3>
       <input type="checkbox" v-model="settings.deletable" /> Deletable<br />
