@@ -67,7 +67,7 @@ class FileRecord {
   public static getFromRaw(
     rawFileRecord: RawFileRecord,
     options: Options,
-    isSync = false,
+    isSync = false
   ): FileRecord | Promise<FileRecord> {
     const fileRecord = new FileRecord(rawFileRecord, options);
     const promise = fileRecord.setUrl(rawFileRecord.url as string);
@@ -240,6 +240,14 @@ class FileRecord {
     return this.progressInternal || 0;
   }
 
+  public getProgress(): number {
+    return this.progress() as number;
+  }
+
+  public setProgress(progress: number): void {
+    this.progress(progress);
+  }
+
   public url(value?: string): string | undefined | Promise<this> {
     if (value !== undefined) {
       return this.setUrl(value).then(() => {
@@ -388,7 +396,7 @@ class FileRecord {
           },
           (err) => {
             resolve(this);
-          },
+          }
         );
         return;
       }

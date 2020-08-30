@@ -2,7 +2,8 @@ type Theme = 'list' | 'default';
 export interface ElementRect {
   rect: DOMRect;
   element: HTMLElement;
-};
+}
+const transitioningElements: HTMLElement[] = [];
 export class TransitionManager {
   private options = {
     transitionDuration: 300,
@@ -11,14 +12,56 @@ export class TransitionManager {
       transform: 'translate3d(0, 0, 0) scale(0.25)',
     } as Record<string, string>,
   };
+  // private transitioningElements: HTMLElement[] = [];
   constructor(private theme?: Theme) {
     if (this.isListTheme) {
       this.options.transitionStyle.transform = 'translate3d(0px, -20px, 0px)';
     }
   }
+
+  get transitioningElements() {
+    return transitioningElements;
+  }
+
+  // set transitioningElements(elements: HTMLElement[]) {
+  //   transitioningElements = elements;
+  // }
+
+  public isElementTransitioning(element: HTMLElement, transitioning?: boolean) {
+    const index = this.transitioningElements.indexOf(element);
+    const isAlready = index !== -1;
+    if (transitioning === undefined) {
+      return isAlready;
+    }
+
+    if (transitioning === true) {
+      if (isAlready) {
+        return;
+      }
+      this.transitioningElements.push(element);
+    } else if (transitioning === false) {
+      if (!isAlready) {
+        return;
+      }
+      this.transitioningElements.splice(index, 1);
+    }
+  }
+
+  public areElementsTransitioning(elements: HTMLElement[], transitioning?: boolean) {
+    // this.transitioningElements = this.transitioningElements.concat(elements);
+    // this.transitioningElements.push(...elements);
+    for (const elem of elements) {
+      this.isElementTransitioning(elem, transitioning);
+    }
+  }
+
   private get isListTheme() {
     return this.theme === 'list';
   }
+  nextFrameX(callback: () => void) {
+    callback();
+  }
+
   nextFrame(callback: () => void) {
     const request = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
     if (!request) {
@@ -34,15 +77,48 @@ export class TransitionManager {
       this.nextFrame(callback);
     });
   }
-  transformOtherElement(element: HTMLElement, first: DOMRect) {
-    const last = element.getBoundingClientRect();
+  transformOtherElement(child: HTMLElement, first: DOMRect, last: DOMRect) {
+    let isTransitioning = false;
+    if (this.isElementTransitioning(child)) {
+      isTransitioning = true;
+      // return /*isElementTransitioning*/;
+    }
+    const toSameLocation =
+      first.x === last.x &&
+      first.y === last.y &&
+      first.top === last.top &&
+      first.right === last.right &&
+      first.bottom === last.bottom &&
+      first.left === last.left &&
+      first.width === last.width &&
+      first.height === last.height;
+    if (toSameLocation) {
+      console.log('yes... toSameLocation... @@@@@@@@@@');
+      return;
+    }
+    if (isTransitioning && toSameLocation) {
+      // probably "applyTransitions" called twice
+      // return;
+    }
+    this.isElementTransitioning(child, true);
+    child.style.transition = '';
     const transform = `translate3d(${first.left - last.left}px, ${first.top - last.top}px, 0)`;
-    element.style.transform = transform;
-    element.style.transition = '';
+    child.style.transform = transform;
     this.nextFrame(() => {
-      element.style.transition = `all ${this.options.transitionDuration}ms`;
+      child.style.transition = `all ${this.options.transitionDuration}ms`;
       this.nextFrame(() => {
-        element.style.transform = '';
+        // child.style.transform = '';
+        child.style.transform = 'translate3d(0, 0, 0)';
+        const onTransitionEnd = (event: Event) => {
+          console.log('onTransitionEnd...');
+          event.stopPropagation();
+          this.nextFrameX(() => {
+            child.style.transition = '';
+          });
+          this.isElementTransitioning(child, false);
+          child.removeEventListener('transitionend', onTransitionEnd, false);
+        };
+        child.addEventListener('transitionend', onTransitionEnd, false);
       });
     });
   }
@@ -67,6 +143,11 @@ export class TransitionManager {
     this.applyTransitionStyle(child, resetStyle);
   }
   addElement(child: HTMLElement) {
+    if (this.isElementTransitioning(child)) {
+      console.log('this.isElementTransitioning(child)', this.isElementTransitioning(child));
+      // return /*isElementTransitioning*/;
+    }
+    this.isElementTransitioning(child, true);
     child.style.transition = '';
     this.applyTransitionStyle(child);
     this.nextFrame(() => {
@@ -83,18 +164,19 @@ export class TransitionManager {
           this.nextFrame(() => {
             child.style.transition = '';
           });
+          this.isElementTransitioning(child, false);
           child.removeEventListener('transitionend', onTransitionEnd, false);
         };
         child.addEventListener('transitionend', onTransitionEnd, false);
       });
     });
   }
-  addElements(children: HTMLElement[]) {
-    for (const child of children) {
-      this.addElement(child);
-    }
-  }
+
   removeElement(child: HTMLElement) {
+    if (this.isElementTransitioning(child)) {
+      // return /*isElementTransitioning*/;
+    }
+    this.isElementTransitioning(child, true);
     this.resetTransitionStyle(child);
     child.style.transition = `all ${this.options.transitionDuration}ms`;
     this.nextFrame(() => {
@@ -109,6 +191,7 @@ export class TransitionManager {
       child.style.transition = '';
       this.resetTransitionStyle(child);
       child.parentElement?.removeChild(child);
+      this.isElementTransitioning(child, false);
       child.removeEventListener('transitionend', onTransitionEnd, false);
     };
     child.addEventListener('transitionend', onTransitionEnd, false);
@@ -120,15 +203,94 @@ export class TransitionManager {
     }
   }
 
+  sortElements(
+    container: HTMLElement,
+    oldElements: HTMLElement[],
+    newElements: HTMLElement[],
+    oldElementRects: ElementRect[],
+    newElementRects: ElementRect[]
+  ) {
+    const useAnimationApi = false;
+    // for (const ch of newElements) {
+    //   container.appendChild(ch);
+    // }
+    if (useAnimationApi) {
+      // for (const ch of newElements) {
+      //   container.appendChild(ch);
+      // }
+      // return;
+      for (const elem of newElements) {
+        const oldRect = oldElementRects.filter((elemRect) => elemRect.element === elem)[0].rect;
+        const newRect = newElementRects.filter((elemRect) => elemRect.element === elem)[0].rect;
+        // let isSame = false;
+        if (oldRect.x === newRect.x && oldRect.y === newRect.y) {
+          continue;
+          // isSame = true;
+        }
+        const offsetTransform = `translate3d(${-(newRect.x - oldRect.x)}px, ${-(newRect.y - oldRect.y)}px, 0px)`;
+        console.log('offsetTransform', offsetTransform, oldRect, newRect);
+        if ((elem as any).isAnimating) {
+          // (elem as any).isAnimating.animation.cancel();
+          continue;
+        }
+        const animation = elem.animate(
+          [
+            // keyframes
+            { transform: offsetTransform },
+            { transform: 'translate3d(0px, 0px, 0px)' },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+        animation.onfinish = (event) => {
+          (elem as any).isAnimating = false;
+        };
+        (elem as any).isAnimating = animation;
+      }
+      return;
+    }
+    // for (const ch of newElements) {
+    //   if (!this.isElementTransitioning(ch)) {
+    //     // const transform = ch.style.transform;
+    //     const style = window.getComputedStyle(ch);
+    //     const transform = style.getPropertyValue('transform');
+    //     console.log('computedTransform', transform);
+    //     if (transform.indexOf('translate') !== -1) {
+    //       const transformArr = transform
+    //         .replace(/translate(3d)?/, '')
+    //         .replace('(', '')
+    //         .replace(')', '')
+    //         .split(',');
+    //       const transitioningPosition = {
+    //         x: parseFloat(transformArr[0].replace('px', '').trim()),
+    //         y: parseFloat(transformArr[1].replace('px', '').trim()),
+    //       };
+    //       console.log('transitioningPosition', transitioningPosition);
+    //     }
+    //     container.appendChild(ch);
+    //   } else {
+    //     container.appendChild(ch);
+    //   }
+    // }
+    return this.applyTransitions([], [], newElements, oldElementRects, newElementRects);
+  }
+
   applyTransitions(
     newChildren: HTMLElement[],
     removedChildren: HTMLElement[],
     otherChildren: HTMLElement[],
     childRects: ElementRect[],
-    ignoredChildren?: HTMLElement[]
+    // ignoredChildren?: HTMLElement[]
+    newElementRects?: ElementRect[]
   ) {
     console.log('applyTransitions');
-    this.addElements(newChildren);
+    // this.addElements(newChildren);
+    for (const child of newChildren) {
+      this.addElement(child);
+    }
 
     let displayValue = 'inline-block';
     removedChildren.map((child) => {
@@ -155,13 +317,26 @@ export class TransitionManager {
       this.removeElement(child);
     }
 
+    if (!newElementRects) {
+      console.log('ballloo!');
+      newElementRects = [];
+      for (const child of otherChildren) {
+        // getBoundingClientRect causes sync layout
+        newElementRects.push({
+          rect: child.getBoundingClientRect(),
+          element: child,
+        });
+      }
+    }
     for (const child of otherChildren) {
       const childRect = childRects.filter((cr) => cr.element === child)[0];
       const rect = childRect ? childRect.rect : undefined;
       if (!rect) {
         continue;
       }
-      this.transformOtherElement(child, rect);
+      const newElementRect = newElementRects.filter((cr) => cr.element === child)[0];
+      const newRect = newElementRect ? newElementRect.rect : child.getBoundingClientRect();
+      this.transformOtherElement(child, rect, newRect);
     }
   }
 }

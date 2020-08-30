@@ -14,15 +14,11 @@ export class PropsForm extends Component {
       // sortable: 'handle',
       sortable: true,
       draggable: true,
+      theme: 'list',
     });
-    this.fileAgent.update();
     // this.fileAgent.$props.theme = 'list';
     // this.fileAgent.$props.uploadUrl =
     //   'http://localhost/safrazik/vue-file-agent/packages/vue-file-agent/upload-server-examples/php/upload-server.php';
-  }
-
-  update() {
-    this.fileAgent.update();
   }
 
   bindEvents() {
@@ -59,7 +55,6 @@ export class PropsForm extends Component {
       input.onchange = (event) => {
         console.log(prop, '(event.target as HTMLInputElement).checked', (event.target as HTMLInputElement).checked);
         this.fileAgent.setProps({ [prop]: (event.target as HTMLInputElement).checked });
-        this.update();
       };
       booleans.appendChild(div);
     }
@@ -87,7 +82,6 @@ export class PropsForm extends Component {
       input.oninput = (event) => {
         console.log(prop, '(event.target as HTMLInputElement).value', (event.target as HTMLInputElement).value);
         this.fileAgent.setProps({ [prop]: (event.target as HTMLInputElement).value });
-        this.update();
       };
       strings.appendChild(div);
     }

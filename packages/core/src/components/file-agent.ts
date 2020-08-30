@@ -35,7 +35,7 @@ export class FileAgent extends Component {
   constructor($props?: FileAgentProps) {
     super();
     if ($props) {
-      this.setProps($props);
+      this.setProps($props, false);
     }
   }
 
@@ -43,9 +43,12 @@ export class FileAgent extends Component {
     return this.$props;
   }
 
-  setProps(props: FileAgentProps) {
+  setProps(props: FileAgentProps, updateUi = true) {
     this.$props = createFileAgentProps(props, this.$props);
     this.$props.fileRecords = this.$props.fileRecords || [];
+    if (updateUi) {
+      this.update();
+    }
   }
 
   get isSortable() {

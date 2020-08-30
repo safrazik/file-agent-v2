@@ -41,14 +41,14 @@ export class AdvancedDemo extends Component {
               resolve(false);
               return;
             }
-            alert('File deleted: ' + fr.name());
+            console.log('File deleted: ' + fr.name());
             resolve(true);
           }, 500);
         });
       },
       onRename: (fr) => {
         setTimeout(() => {
-          alert('File renamed: ' + fr.name());
+          console.log('File renamed: ' + fr.name());
         }, 500);
       },
     });
@@ -59,7 +59,6 @@ export class AdvancedDemo extends Component {
     }).then((fileRecords) => {
       console.log('fileRecords Reached', fileRecords);
       this.fileAgent.setProps({ fileRecords });
-      this.fileAgent.update();
     });
   }
 

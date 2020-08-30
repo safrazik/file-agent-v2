@@ -81,13 +81,11 @@ setTimeout(() => {
   FileRecord.fromRawArray([secFileRecord as any], {} as any).then((secFileRecords) => {
     winFileRecords = winFileRecords.slice(0, 1).concat(secFileRecords).concat(winFileRecords.slice(1));
     fileAgent.setProps({ fileRecords: winFileRecords });
-    fileAgent.update();
   });
 }, 1000);
 setTimeout(() => {
   winFileRecords = winFileRecords.reverse();
   fileAgent.setProps({ fileRecords: winFileRecords });
-  fileAgent.update();
 }, 2000);
 
 FileRecord.fromRawArray(rawFileRecords.slice(0, 1).concat(rawFileRecords.slice(2)) as any, {
