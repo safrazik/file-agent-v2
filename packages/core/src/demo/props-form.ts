@@ -3,9 +3,12 @@ import template from './props-form.html';
 // import FileRecord from '../lib/file-record';
 // import utils from '../lib/utils';
 import { FileAgent, FileAgentProps, createFileAgentProps } from '..';
+import FileRecord from '../lib/file-record';
 
 export class PropsForm extends Component {
   props = createFileAgentProps();
+  fileRecords: FileRecord[] = [];
+  scopedFileRecord?: FileRecord;
   constructor(protected fileAgent: FileAgent) {
     super();
     this.fileAgent.setProps({
@@ -14,8 +17,15 @@ export class PropsForm extends Component {
       // sortable: 'handle',
       sortable: true,
       draggable: true,
-      layout: 'list',
+      // layout: 'list',
+      layout: 'default',
+      theme: 'rounded',
+      onChange: (fileRecords) => {
+        this.fileRecords = fileRecords;
+        this.updateScopedUi();
+      },
     });
+    this.fileRecords = this.fileAgent.props.fileRecords;
     // this.fileAgent.$props.theme = 'list';
     // this.fileAgent.$props.uploadUrl =
     //   'http://localhost/safrazik/vue-file-agent/packages/vue-file-agent/upload-server-examples/php/upload-server.php';
@@ -86,7 +96,11 @@ export class PropsForm extends Component {
       };
       strings.appendChild(div);
     }
-    for (const sel of [['layout', ['default', 'list']]]) {
+    for (const sel of [
+      //
+      ['layout', ['default', 'list']],
+      ['theme', ['default', 'rounded']],
+    ]) {
       const prop = sel[0] as string;
       const options = sel[1] as string[];
       const div = document.createElement('div');
@@ -123,6 +137,60 @@ export class PropsForm extends Component {
     //   this.fileAgent.$props.accept = (event.target as HTMLInputElement).value;
     //   this.update();
     // };
+    (this.getRef('scoped-progress') as HTMLInputElement).oninput = (event) => {
+      const value = (event.target as HTMLInputElement).value;
+      if (!this.scopedFileRecord) {
+        return;
+      }
+      this.scopedFileRecord.setProgress(parseFloat(value));
+    };
+    (this.getRef('scoped-error') as HTMLInputElement).oninput = (event) => {
+      const value = (event.target as HTMLInputElement).value;
+      if (!this.scopedFileRecord) {
+        return;
+      }
+      this.scopedFileRecord.setError(value || false, false);
+    };
+    (this.getRef('scoped-name') as HTMLInputElement).oninput = (event) => {
+      const value = (event.target as HTMLInputElement).value;
+      if (!this.scopedFileRecord) {
+        return;
+      }
+      this.scopedFileRecord.setName(value, false);
+    };
+    this.updateScopedUi();
+  }
+
+  updateScopedFilenameUi() {
+    if (!this.scopedFileRecord) {
+      return;
+    }
+    this.getRef('scoped-file').innerHTML = this.scopedFileRecord.name();
+  }
+
+  updateScopedUi() {
+    if (!this.scopedFileRecord) {
+      this.scopedFileRecord = this.fileRecords[0];
+      this.updateScopedFilenameUi();
+    }
+    const container = this.getRef('scoped-container');
+    container.innerHTML = '';
+    let idx = -1;
+    for (const fileRecord of this.fileRecords) {
+      idx++;
+      const div = document.createElement('div');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.innerHTML = '' + (idx + 1) + '. ' + fileRecord.name();
+      button.onclick = () => {
+        // alert(idx);
+        this.scopedFileRecord = fileRecord;
+        this.updateScopedFilenameUi();
+      };
+      // div.appendChild(button);
+      container.appendChild(button);
+    }
+    // this.getRef('scoped-operations');
   }
 
   get $el() {

@@ -269,13 +269,13 @@ export class SortableManager {
     movingInfo = undefined;
   }
 
-  getRectForElement(element: HTMLElement) {
+  getRectForElement(element: HTMLElement): Rect {
     const elementRect = this.elementRects.filter((cr) => cr.element === element)[0];
     const rect = elementRect ? elementRect.rect : element.getBoundingClientRect();
     return rect;
   }
 
-  getElementCloned(element: HTMLElement) {
+  getElementCloned(element: HTMLElement, rect: Rect) {
     const clonedElement = element.cloneNode(true) as HTMLElement;
     clonedElement.style.position = 'fixed';
     clonedElement.style.top = '0';
@@ -283,8 +283,10 @@ export class SortableManager {
     clonedElement.style.zIndex = '12';
     clonedElement.style.boxSizing = 'border-box';
     clonedElement.style.pointerEvents = 'none';
-    clonedElement.style.width = element.clientWidth + 'px';
-    clonedElement.style.height = element.clientHeight + 'px';
+    clonedElement.style.width = rect.width + 'px';
+    clonedElement.style.height = rect.height + 'px';
+    // clonedElement.style.width = element.clientWidth + 'px';
+    // clonedElement.style.height = element.clientHeight + 'px';
     return clonedElement;
   }
 
@@ -515,11 +517,11 @@ export class SortableManager {
     this.container.classList.add(this.activeContainerClass);
     const element = this.movingInfo.element;
     this.calculateElementRects();
+    const rect = this.getRectForElement(element);
     element.style.transition = '';
-    const clonedElement = this.getElementCloned(element);
+    const clonedElement = this.getElementCloned(element, rect);
     // clonedElement.style.opacity = '0.5'
     clonedElement.classList.add(this.activeElementClass);
-    const rect = this.getRectForElement(element);
     element.style.visibility = 'hidden';
     this.container.appendChild(clonedElement);
     //   element.style.opacity = '0';

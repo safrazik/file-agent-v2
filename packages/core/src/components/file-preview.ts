@@ -93,7 +93,13 @@ export class FilePreview extends Component {
 
   hasDismissibleError() {
     const fileRecord = this.$props.fileRecord as FileRecord;
-    return !(fileRecord.error && (fileRecord.error.size || fileRecord.error.type));
+    if (!fileRecord.error) {
+      return false;
+    }
+    if (fileRecord.error.dismissible === false) {
+      return false;
+    }
+    return !(fileRecord.error.size || fileRecord.error.type);
   }
 
   dismissError() {

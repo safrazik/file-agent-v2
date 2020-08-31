@@ -27,6 +27,7 @@ interface ErrorFlags {
   type?: boolean;
   size?: boolean;
   upload?: false | string;
+  dismissible?: boolean;
 }
 
 export interface RawFileRecord {
@@ -336,6 +337,14 @@ class FileRecord {
     return name;
   }
 
+  public getName(withExtension = false) {
+    return this.name(!withExtension);
+  }
+
+  public setName(name: string, withExtension = false) {
+    this.nameWithoutExtension(name);
+  }
+
   public isDarkColor(): boolean {
     if (this.imageColor) {
       const rgb = this.imageColor;
@@ -461,12 +470,13 @@ class FileRecord {
     this.setError(error);
   }
 
-  public setError(error?: string | false) {
+  public setError(error?: string | false, dismissible = true) {
     if (error === false) {
       this.error = false;
     } else {
       this.error = {
         upload: error,
+        dismissible,
       };
     }
     this.onChange.error(this.error);

@@ -78,6 +78,7 @@ export interface FileAgentProps {
   multiple?: boolean;
   smartBackground?: boolean;
   layout?: 'default' | 'list';
+  theme?: 'default' | 'rounded';
   sortable?: boolean | 'hold' | 'handle';
   meta?: boolean;
   compact?: boolean;
@@ -99,11 +100,11 @@ export interface FileAgentProps {
   // events?: {
   onBeforeDelete?: (fileRecord: FileRecord) => CancelableEventReturnType;
   onDelete?: (fileRecord: FileRecord) => CancelableEventReturnType;
-  onChange?: (event: InputEvent) => void;
+  onInputChange?: (event: InputEvent) => void;
   onDrop?: (event: DragEvent) => void;
   onBeforeRename?: (fileRecord: FileRecord) => CancelableEventReturnType;
   onRename?: (fileRecord: FileRecord) => CancelableEventReturnType;
-  onInput?: (fileRecords: FileRecord[]) => void;
+  onChange?: (fileRecords: FileRecord[]) => void;
   onSelect?: (fileRecords: FileRecord[]) => void;
   onUpload?: (fileRecord: FileRecord[], result: any) => void;
   onUploadError?: (fileRecord: FileRecord[], result: any) => void;
@@ -172,6 +173,7 @@ export const createFileAgentProps = (
         multiple: true,
         smartBackground: true,
         layout: 'default',
+        theme: 'default',
         sortable: false,
         meta: true,
         compact: false,
@@ -192,11 +194,11 @@ export const createFileAgentProps = (
         uploadWithCredentials: undefined,
         onBeforeDelete: undefined,
         onDelete: undefined,
-        onChange: undefined,
+        onInputChange: undefined,
         onDrop: undefined,
         onBeforeRename: undefined,
         onRename: undefined,
-        onInput: undefined,
+        onChange: undefined,
         onSelect: undefined,
         onUpload: undefined,
         onUploadError: undefined,
@@ -251,6 +253,7 @@ export const fileAgentProps = {
   multiple: booleanProp(fileAgentPropsDefaults.multiple),
   smartBackground: booleanProp(fileAgentPropsDefaults.smartBackground),
   layout: createProp<'default' | 'list'>('string', String),
+  theme: createProp<'default' | 'rounded'>('string', String),
   sortable: createProp<boolean | 'hold' | 'handle'>('string', String),
   meta: booleanProp(fileAgentPropsDefaults.meta),
   compact: booleanProp(fileAgentPropsDefaults.compact),
@@ -272,11 +275,11 @@ export const fileAgentProps = {
   // events:
   onBeforeDelete: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
   onDelete: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
-  onChange: functionProp<(event: InputEvent) => void>(),
+  onInputChange: functionProp<(event: InputEvent) => void>(),
   onDrop: functionProp<(event: DragEvent) => void>(),
   onBeforeRename: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
   onRename: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
-  onInput: functionProp<(fileRecords: FileRecord[]) => void>(),
+  onChange: functionProp<(fileRecords: FileRecord[]) => void>(),
   onSelect: functionProp<(fileRecords: FileRecord[]) => void>(),
   onUpload: functionProp<(fileRecord: FileRecord[], result: any) => void>(),
   onUploadError: functionProp<(fileRecord: FileRecord[], result: any) => void>(),

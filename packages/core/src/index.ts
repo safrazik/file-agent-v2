@@ -7,5 +7,6 @@ export * from './lib/uploader-interface';
 import plugins from './lib/plugins';
 
 import './scss/index.scss';
+import './scss/themes/rounded/index.scss';
 
 export { FileRecord, plugins };

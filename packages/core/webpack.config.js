@@ -5,7 +5,8 @@ const createConfig = (options, isDebugging) => {
   return {
     plugins: [
       new MiniCssExtractPlugin({
-        filename: isDebugging ? 'file-agent-demo.css' : 'file-agent.css',
+        // filename: isDebugging ? 'file-agent-demo.css' : 'file-agent.css',
+        filename: '[name].css',
       }),
     ],
     watch: options.watch === true,
@@ -84,7 +85,9 @@ module.exports = (env, argv) => {
   const entry = {};
   if (isDebugging) {
     entry['file-agent-demo'] = path.join(__dirname, 'src', 'demo', 'index.ts');
+    // entry['themes/test'] = path.join(__dirname, 'src', 'demo', 'index.ts');
   } else {
+    // entry['themes/test'] = path.join(__dirname, 'src', 'scss/themes/rounded/index.scss');
     entry['file-agent'] = path.join(__dirname, 'src', 'index.ts');
     configs.push(
       createConfig(

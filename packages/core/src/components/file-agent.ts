@@ -365,9 +365,6 @@ export class FileAgent extends Component {
         this.$props.fileRecords[0] = fileRecords[0];
       }
 
-      if (this.$props.onInput) {
-        this.$props.onInput(this.$props.fileRecords);
-      }
       if (this.$props.onSelect) {
         this.$props.onSelect(fileRecords);
       }
@@ -432,9 +429,6 @@ export class FileAgent extends Component {
     // if (this.$props.onDelete) {
     //   this.$props.onDelete(fileRecord);
     // }
-    if (this.$props.onInput) {
-      this.$props.onInput(this.$props.fileRecords);
-    }
     this.onEventCheck(
       fileRecord,
       (fr) => {
@@ -555,8 +549,8 @@ export class FileAgent extends Component {
 
   filesChanged(event: InputEvent) {
     const files: FileList = (event.target as HTMLInputElement).files as FileList;
-    if (this.$props.onChange) {
-      this.$props.onChange(event);
+    if (this.$props.onInputChange) {
+      this.$props.onInputChange(event);
     }
     if (!files[0]) {
       return;
@@ -693,6 +687,7 @@ export class FileAgent extends Component {
 
   updateWrapper() {
     this.$el.className = `layout-${this.$props.layout}
+      theme-${this.$props.theme}
       is-sortable-${this.isSortable ? 'enabled' : 'disabled'}
       ${this.$props.sortable === 'hold' ? 'is-sortable-hold' : ''}
       ${this.$props.sortable === 'handle' ? 'is-sortable-handle' : ''}
@@ -788,7 +783,6 @@ export class FileAgent extends Component {
     this.insertSlotBefore('container', 'beforeInner');
     this.insertSlotAfter('container', 'afterInner');
     this.insertSlotAfter(this.$el, 'afterOuter');
-    let index = 0;
     const fileRecords = this.$props.fileRecords.concat([]).reverse();
     const newChildren: HTMLElement[] = [];
     const otherChildren: HTMLElement[] = [];
@@ -802,7 +796,9 @@ export class FileAgent extends Component {
         childRects.push({ element: child, rect: child.getBoundingClientRect() });
       }
     }
+    let index = -1;
     for (const fileRecord of fileRecords) {
+      index++;
       const cachedItem = this.getCachedItemForFileRecord(fileRecord);
       let child = cachedItem?.child;
       let filePreview = cachedItem?.filePreview;
@@ -892,7 +888,6 @@ export class FileAgent extends Component {
       } else {
         container.appendChild(child);
       }
-      index++;
     }
     // newFileElementFirst;
     const removedItems = this.cachedItems.filter((ch) => fileRecords.indexOf(ch.fileRecord) === -1);
@@ -943,6 +938,9 @@ export class FileAgent extends Component {
     input.onchange = (event) => {
       this.filesChanged(event as InputEvent);
     };
+    if (this.$props.onChange) {
+      this.$props.onChange(this.$props.fileRecords);
+    }
   }
 
   get $el(): HTMLElement {
