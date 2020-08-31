@@ -692,7 +692,7 @@ export class FileAgent extends Component {
   }
 
   updateWrapper() {
-    this.$el.className = `theme-${this.$props.theme}
+    this.$el.className = `layout-${this.$props.layout}
       is-sortable-${this.isSortable ? 'enabled' : 'disabled'}
       ${this.$props.sortable === 'hold' ? 'is-sortable-hold' : ''}
       ${this.$props.sortable === 'handle' ? 'is-sortable-handle' : ''}
@@ -901,7 +901,7 @@ export class FileAgent extends Component {
     if (!enableTransitions) {
       removedChildren.map((child) => container.removeChild(child));
     } else {
-      transitionManager = new TransitionManager(this.$props.theme);
+      transitionManager = new TransitionManager(this.$props.layout);
       transitionManager.applyTransitions(newChildren, removedChildren, otherChildren.concat(newFileChild), childRects);
     }
     const sortableManager = new SortableManager(

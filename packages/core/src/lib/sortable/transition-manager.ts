@@ -13,8 +13,8 @@ export class TransitionManager {
     } as Record<string, string>,
   };
   // private transitioningElements: HTMLElement[] = [];
-  constructor(private theme?: Theme) {
-    if (this.isListTheme) {
+  constructor(private layout?: Theme) {
+    if (this.isListLayout) {
       this.options.transitionStyle.transform = 'translate3d(0px, -20px, 0px)';
     }
   }
@@ -55,8 +55,8 @@ export class TransitionManager {
     }
   }
 
-  private get isListTheme() {
-    return this.theme === 'list';
+  private get isListLayout() {
+    return this.layout === 'list';
   }
   nextFrameX(callback: () => void) {
     callback();

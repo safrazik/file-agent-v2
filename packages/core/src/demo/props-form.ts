@@ -14,7 +14,7 @@ export class PropsForm extends Component {
       // sortable: 'handle',
       sortable: true,
       draggable: true,
-      theme: 'list',
+      layout: 'list',
     });
     // this.fileAgent.$props.theme = 'list';
     // this.fileAgent.$props.uploadUrl =
@@ -30,6 +30,7 @@ export class PropsForm extends Component {
     // };
     const booleans = document.createElement('div');
     const strings = document.createElement('div');
+    const choices = document.createElement('div');
     for (const prop of [
       'multiple',
       //   'averageColor',
@@ -67,7 +68,7 @@ export class PropsForm extends Component {
       'uploadUrl',
       'capture',
       'sortable',
-      'theme',
+      // 'theme',
     ]) {
       const div = document.createElement('div');
       const input = document.createElement('input');
@@ -85,9 +86,35 @@ export class PropsForm extends Component {
       };
       strings.appendChild(div);
     }
+    for (const sel of [['layout', ['default', 'list']]]) {
+      const prop = sel[0] as string;
+      const options = sel[1] as string[];
+      const div = document.createElement('div');
+      const select = document.createElement('select');
+      // select.placeholder = ({ capture: 'e.g: user, environment', accept: 'image/*,.txt' } as any)[prop] || '';
+      const value = (this.fileAgent.props as any)[prop];
+      for (const opt of options) {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.label = opt;
+        option.innerHTML = opt;
+        select.appendChild(option);
+      }
+      if (value) {
+        select.value = value;
+      }
+      div.appendChild(this.parseTemplate(`<span>${prop}</span>`));
+      div.appendChild(select);
+      select.onchange = (event) => {
+        console.log(prop, '(event.target as HTMLSelectElement).value', (event.target as HTMLSelectElement).value);
+        this.fileAgent.setProps({ [prop]: (event.target as HTMLSelectElement).value });
+      };
+      strings.appendChild(div);
+    }
 
     this.getRef('booleans').appendChild(booleans);
     this.getRef('strings').appendChild(strings);
+    this.getRef('choices').appendChild(choices);
     // this.getRef('prop-helpText').oninput = (event) => {
     //   this.fileAgent.$props.helpText = (event.target as HTMLInputElement).value;
     //   this.update();

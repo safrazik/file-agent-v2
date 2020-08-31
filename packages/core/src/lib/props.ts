@@ -77,7 +77,7 @@ export interface FileAgentProps {
   uploadConfig?: any;
   multiple?: boolean;
   smartBackground?: boolean;
-  theme?: 'default' | 'list';
+  layout?: 'default' | 'list';
   sortable?: boolean | 'hold' | 'handle';
   meta?: boolean;
   compact?: boolean;
@@ -171,7 +171,7 @@ export const createFileAgentProps = (
         uploadConfig: undefined,
         multiple: true,
         smartBackground: true,
-        theme: 'default',
+        layout: 'default',
         sortable: false,
         meta: true,
         compact: false,
@@ -250,7 +250,7 @@ export const fileAgentProps = {
   uploadConfig: createProp<any>('any', Object),
   multiple: booleanProp(fileAgentPropsDefaults.multiple),
   smartBackground: booleanProp(fileAgentPropsDefaults.smartBackground),
-  theme: createProp<'default' | 'list'>('string', String),
+  layout: createProp<'default' | 'list'>('string', String),
   sortable: createProp<boolean | 'hold' | 'handle'>('string', String),
   meta: booleanProp(fileAgentPropsDefaults.meta),
   compact: booleanProp(fileAgentPropsDefaults.compact),
