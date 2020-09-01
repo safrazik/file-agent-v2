@@ -1,5 +1,6 @@
 @mixin rounded-corners() {
   .file-agent {
+    border-radius: 20px;
     .file-preview-wrapper {
       border-radius: 15px;
       overflow: hidden;
@@ -19,10 +20,13 @@
 
   &.layout-list,
   .layout-list {
-    .file-preview-wrapper {
-      border-radius: 12px;
-      overflow: hidden;
-      border-width: 3px !important;
+    .file-agent {
+      border-radius: 15px;
+      .file-preview-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+        border-width: 3px !important;
+      }
     }
   }
 }
