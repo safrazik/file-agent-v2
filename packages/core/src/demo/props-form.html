@@ -1,5 +1,10 @@
 <div>
   Props Form
+  <div>
+    <button data-ref="toggleDarkMode" onclick="document.body.classList.toggle('dark-mode')">
+      Toggle Dark Background
+    </button>
+  </div>
   <div data-ref="booleans"></div>
   <div data-ref="strings"></div>
   <div data-ref="choices"></div>
@@ -20,11 +25,11 @@
   <div>
     <hr />
     <div>With Selected: <span data-ref="scoped-file"></span></div>
-    <div data-ref="scoped-container"></div>
     <div data-ref="scoped-operations">
       <div>Set progress to: <input data-ref="scoped-progress" type="range" min="0" max="100" /></div>
       <div>Set error: <input data-ref="scoped-error" type="text" /></div>
       <div>Set name: <input data-ref="scoped-name" type="text" /></div>
     </div>
+    <div data-ref="scoped-container"></div>
   </div>
 </div>

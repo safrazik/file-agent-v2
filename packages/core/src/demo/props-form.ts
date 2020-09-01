@@ -17,9 +17,9 @@ export class PropsForm extends Component {
       // sortable: 'handle',
       sortable: true,
       draggable: true,
-      // layout: 'list',
-      layout: 'default',
-      theme: 'rounded',
+      layout: 'grid',
+      // layout: 'default',
+      theme: 'light-circle',
       onChange: (fileRecords) => {
         this.fileRecords = fileRecords;
         this.updateScopedUi();
@@ -99,26 +99,42 @@ export class PropsForm extends Component {
     for (const sel of [
       //
       ['layout', ['default', 'list']],
-      ['theme', ['default', 'rounded']],
+      ['theme', ['default', 'rounded', 'light', 'dark', 'circle', 'light-circle', 'dark-circle']],
     ]) {
       const prop = sel[0] as string;
       const options = sel[1] as string[];
       const div = document.createElement('div');
       const select = document.createElement('select');
       // select.placeholder = ({ capture: 'e.g: user, environment', accept: 'image/*,.txt' } as any)[prop] || '';
+      const radioElements: HTMLInputElement[] = [];
       const value = (this.fileAgent.props as any)[prop];
+      const radioContainer = document.createElement('span');
       for (const opt of options) {
         const option = document.createElement('option');
         option.value = opt;
         option.label = opt;
         option.innerHTML = opt;
         select.appendChild(option);
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `radio-${prop}`;
+        input.value = opt;
+        input.checked = value && value === opt;
+        input.onchange = (event) => {
+          console.log(prop, '(event.target as HTMLSelectElement).value', (event.target as HTMLSelectElement).value);
+          this.fileAgent.setProps({ [prop]: (event.target as HTMLSelectElement).value });
+        };
+        const wrap = document.createElement('label');
+        wrap.appendChild(input);
+        wrap.appendChild(this.parseTemplate(`<span>${opt}</span>`));
+        radioContainer.appendChild(wrap);
       }
       if (value) {
         select.value = value;
       }
       div.appendChild(this.parseTemplate(`<span>${prop}</span>`));
-      div.appendChild(select);
+      div.appendChild(radioContainer);
+      // div.appendChild(select);
       select.onchange = (event) => {
         console.log(prop, '(event.target as HTMLSelectElement).value', (event.target as HTMLSelectElement).value);
         this.fileAgent.setProps({ [prop]: (event.target as HTMLSelectElement).value });
@@ -156,7 +172,7 @@ export class PropsForm extends Component {
       if (!this.scopedFileRecord) {
         return;
       }
-      this.scopedFileRecord.setName(value, false);
+      this.scopedFileRecord.setNameWithoutExtension(value);
     };
     this.updateScopedUi();
   }

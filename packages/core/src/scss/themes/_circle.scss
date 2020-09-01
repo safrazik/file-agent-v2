@@ -1,0 +1,240 @@
+@import './mixins';
+
+.theme-dark-circle {
+  @include rounded-corners();
+  @include dark-content();
+  @include circle-icons();
+  .file-agent {
+    // background-color: #3f3f3f;
+    .file-preview {
+      //   .file-icon svg {
+      //     fill: rgba(255, 255, 255, 0.75);
+      //   }
+      .file-preview-overlay {
+        background-color: #282828 !important;
+      }
+    }
+    // .file-preview {
+    //   .file-preview-overlay {
+    //     background: rgba(0, 0, 0, 0.4);
+    //     background: red;
+    //   }
+    // }
+  }
+  &.layout-list,
+  .layout-list {
+    .file-agent {
+      //   .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      //     background-color: #777 !important;
+      //   }
+      .file-preview::before {
+        background-color: #282828 !important;
+      }
+    }
+  }
+}
+
+.theme-light-circle {
+  @include rounded-corners();
+  @include light-content();
+  @include circle-icons();
+  .file-agent {
+    // background-color: #fff;
+    .file-preview {
+      //   .file-icon svg {
+      //     fill: rgba(255, 255, 255, 0.75);
+      //   }
+      .file-preview-overlay {
+        background-color: #e4e4e5 !important;
+        // background: transparent !important;
+      }
+    }
+    // .file-preview {
+    //   .file-preview-overlay {
+    //     background: rgba(0, 0, 0, 0.4);
+    //     background: red;
+    //   }
+    // }
+  }
+  &.layout-list,
+  .layout-list {
+    .file-agent {
+      //   .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      //     background-color: #c4c4c4 !important;
+      //   }
+      .file-preview::before {
+        background-color: #e4e4e5 !important;
+      }
+    }
+  }
+}
+
+.theme-circle {
+  @include rounded-corners();
+  @include circle-icons();
+  //   .file-agent {
+  //     // background-color: #fff;
+  //     .file-preview {
+  //       .thumbnail {
+  //         border-radius: 50% !important;
+  //         margin: 35px !important;
+  //       }
+  //       .file-preview-img {
+  //         max-width: none !important;
+  //         max-height: none !important;
+  //         width: 100% !important;
+  //         height: 100% !important;
+  //         object-fit: cover;
+  //       }
+  //       .file-icon {
+  //         // background-color: rgba(255, 255, 255, 0.5);
+  //         background-color: rgba(0, 0, 0, 0.25);
+  //         background-color: currentColor;
+  //         border-radius: 50%;
+  //       }
+  //       .file-icon svg {
+  //         // fill: #777;
+  //         fill: currentColor;
+  //         fill: #fff;
+  //         // background-color: #fff;
+  //         // background-color: #fff;
+  //         // background-color: currentColor;
+  //         // border-radius: 50%;
+  //       }
+  //       .file-preview-overlay {
+  //         content: ' ';
+  //         //   background: rgba(0, 0, 0, 0.25);
+  //         background: rgba(0, 0, 0, 0.4);
+  //         position: absolute;
+  //         top: 0;
+  //         right: 0;
+  //         bottom: 0;
+  //         left: 0;
+  //         z-index: -1;
+  //       }
+  //       .file-category-video-playable {
+  //         .file-preview .file-preview-overlay {
+  //           z-index: 1;
+  //         }
+  //       }
+
+  //       .file-preview-wrapper-image {
+  //         .file-preview.dark-content .file-preview-overlay {
+  //           background: rgba(255, 255, 255, 0.25);
+  //         }
+  //       }
+  //       &::before {
+  //         box-shadow: none !important;
+  //       }
+
+  //       &::after {
+  //         box-shadow: none !important;
+  //       }
+  //     }
+  //     // .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+  //     //   background-color: #e4e4e5 !important;
+  //     //   .file-icon svg {
+  //     //     // fill: #777;
+  //     //     fill: currentColor;
+  //     //     background-color: #fff;
+  //     //     fill: #fff;
+  //     //     background-color: #fff;
+  //     //     background-color: currentColor;
+  //     //     border-radius: 50%;
+  //     //   }
+  //     //   @include light-content();
+  //     // }
+  //   }
+
+  //   &.layout-list,
+  //   .layout-list {
+  //     .file-agent {
+  //       .file-preview {
+  //         // .file-preview-overlay {
+  //         //   background: #d0d0d0;
+  //         // }
+
+  //         //   .file-preview {
+  //         //     .file-icon {
+  //         //       background-color: currentColor;
+  //         //       border-radius: 50%;
+  //         //     }
+  //         //     .file-preview-overlay {
+  //         //       background: #bfbfbf !important;
+  //         //     }
+  //         //   }
+
+  //         .thumbnail,
+  //         .file-icon {
+  //           height: 45px !important;
+  //           width: 45px !important;
+  //           left: 4px !important;
+  //           top: 4px !important;
+  //           margin: 0px !important;
+  //         }
+  //         //   .thumbnail {
+  //         //     margin: 0px !important;
+  //         //   }
+
+  //         //   .file-icon {
+  //         //     //
+  //         //   }
+  //         .file-icon svg {
+  //           // margin-top: 1px !important;
+  //           margin-top: 0px !important;
+  //           width: 45px !important;
+  //           height: 45px !important;
+  //         }
+  //       }
+  //     }
+  //     // .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+  //     //   background-color: #c4c4c4 !important;
+  //     // }
+  //     // .file-preview::before {
+  //     //   background-color: #e4e4e5 !important;
+  //     // }
+  //   }
+}
+
+.theme-light-circleXX {
+  @include rounded-corners();
+  .file-agent {
+    // background-color: #fff;
+    .file-preview {
+      .thumbnail {
+        border-radius: 50% !important;
+        margin: 35px !important;
+      }
+      .file-preview-img {
+        max-width: none !important;
+        max-height: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+      }
+    }
+    .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      background-color: #e4e4e5 !important;
+      .file-icon svg {
+        // fill: #777;
+        fill: currentColor;
+        background-color: #fff;
+        fill: #fff;
+        background-color: #fff;
+        background-color: currentColor;
+        border-radius: 50%;
+      }
+      @include light-content();
+    }
+  }
+
+  &.layout-list,
+  .layout-list {
+    // .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+    //   background-color: #c4c4c4 !important;
+    // }
+    // .file-preview::before {
+    //   background-color: #e4e4e5 !important;
+    // }
+  }
+}

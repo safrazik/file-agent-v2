@@ -1,0 +1,67 @@
+@import './mixins';
+
+.theme-light {
+  @include rounded-corners();
+  @include light-content();
+  .file-agent {
+    // background-color: #fff;
+    .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      background-color: #e4e4e5 !important;
+      .file-icon svg {
+        fill: #777;
+      }
+    }
+  }
+
+  &.layout-list,
+  .layout-list {
+    .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      background-color: #c4c4c4 !important;
+    }
+    .file-preview::before {
+      background-color: #e4e4e5 !important;
+    }
+  }
+
+  //   &.layout-list,
+  //   .layout-list {
+  //     .file-preview::before {
+  //       background: #1b1b1b !important;
+  //     }
+  //     .thumbnail,
+  //     .file-icon {
+  //       // width: 100%;
+  //       // left: 0;
+  //       // margin: 0;
+  //       // top: 0;
+  //       // bottom: 0;
+  //       // height: 100%;
+  //       // width: 53px;
+  //       top: 2px;
+  //       left: 2px;
+  //     }
+  //   }
+}
+
+.theme-dark {
+  @include rounded-corners();
+  @include dark-content();
+  .file-agent {
+    // background-color: #3f3f3f;
+    .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      background-color: #282828 !important;
+      .file-icon svg {
+        fill: rgba(255, 255, 255, 0.75);
+      }
+    }
+  }
+  &.layout-list,
+  .layout-list {
+    .file-preview-wrapper-other:not(.file-category-video-playable) .file-preview {
+      background-color: #777 !important;
+    }
+    .file-preview::before {
+      background-color: #282828 !important;
+    }
+  }
+}

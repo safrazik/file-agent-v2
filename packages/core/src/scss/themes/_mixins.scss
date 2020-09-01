@@ -1,0 +1,159 @@
+@mixin rounded-corners() {
+  .file-agent {
+    .file-preview-wrapper {
+      border-radius: 15px;
+      overflow: hidden;
+      border-width: 5px !important;
+    }
+    .file-progress {
+      &.file-progress-done {
+        top: 1px !important;
+        right: 1px !important;
+      }
+    }
+  }
+
+  .grid-block-wrapper {
+    padding: 5px !important;
+  }
+
+  &.layout-list,
+  .layout-list {
+    .file-preview-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      border-width: 3px !important;
+    }
+  }
+}
+
+@mixin light-content() {
+  .file-agent {
+    .file-preview {
+      .file-name,
+      .file-ext,
+      .file-size,
+      .image-dimension,
+      .image-dimension .image-dimension-width::after {
+        color: #333 !important;
+      }
+
+      .file-name {
+        color: #222 !important;
+      }
+
+      .file-delete {
+        color: #777 !important;
+      }
+
+      .image-dimension .image-dimension-width::after {
+        color: #666;
+      }
+    }
+  }
+}
+
+@mixin dark-content {
+  .file-agent {
+    .file-preview {
+      .file-name,
+      .file-ext,
+      .file-size,
+      .image-dimension,
+      .image-dimension .image-dimension-width::after {
+        color: #ddd !important;
+      }
+
+      .file-name {
+        color: #eee !important;
+      }
+
+      .file-delete {
+        color: #aaa !important;
+      }
+
+      .image-dimension .image-dimension-width::after {
+        color: #ddd;
+      }
+    }
+  }
+}
+
+@mixin circle-icons {
+  .file-agent {
+    .file-preview {
+      .thumbnail {
+        border-radius: 50% !important;
+        margin: 35px !important;
+      }
+      .file-preview-img {
+        max-width: none !important;
+        max-height: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+      }
+      .file-icon {
+        background-color: currentColor;
+        border-radius: 50%;
+      }
+      .file-icon svg {
+        fill: #fff;
+      }
+      .file-preview-overlay {
+        background: rgba(0, 0, 0, 0.4);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+      }
+
+      .file-category-video-playable {
+        .file-preview .file-preview-overlay {
+          z-index: 1;
+        }
+      }
+
+      .file-preview-wrapper-image {
+        .file-preview.dark-content .file-preview-overlay {
+          background: rgba(255, 255, 255, 0.25);
+        }
+      }
+
+      &::before {
+        box-shadow: none !important;
+      }
+
+      &::after {
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  &.layout-list,
+  .layout-list {
+    .file-agent {
+      .file-preview {
+        // .file-preview-overlay {
+        //   background: #d0d0d0;
+        // }
+        .thumbnail,
+        .file-icon {
+          height: 45px !important;
+          width: 45px !important;
+          left: 4px !important;
+          top: 4px !important;
+          margin: 0px !important;
+        }
+
+        .file-icon svg {
+          margin-top: 0px !important;
+          width: 45px !important;
+          height: 45px !important;
+        }
+      }
+    }
+  }
+}

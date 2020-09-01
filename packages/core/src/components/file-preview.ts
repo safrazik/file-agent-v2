@@ -135,7 +135,7 @@ export class FilePreview extends Component {
     if (newValue !== oldValue) {
       // fileRecord.oldCustomName = oldValue;
       // this.update();
-      fileRecord.nameWithoutExtension(newValue);
+      fileRecord.setNameWithoutExtension(newValue);
       if (this.$props.onRename) {
         this.$props.onRename(fileRecord);
       }
@@ -363,6 +363,7 @@ export class FilePreview extends Component {
         `;
 
     previewRefEl.style.backgroundColor = fileRecord.color();
+    previewRefEl.style.color = fileRecord.color();
 
     this.updateThumbnail();
 

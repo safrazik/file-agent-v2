@@ -70,6 +70,9 @@ export interface FilePreviewProps {
   errorText?: ErrorTextType;
 }
 
+export type Layout = 'default' | 'grid' | 'list';
+export type Theme = 'default' | 'rounded' | 'light' | 'dark' | 'circle' | 'light-circle' | 'dark-circle';
+
 export interface FileAgentProps {
   auto?: boolean;
   uploadUrl?: string;
@@ -77,8 +80,8 @@ export interface FileAgentProps {
   uploadConfig?: any;
   multiple?: boolean;
   smartBackground?: boolean;
-  layout?: 'default' | 'list';
-  theme?: 'default' | 'rounded';
+  layout?: Layout;
+  theme?: Theme;
   sortable?: boolean | 'hold' | 'handle';
   meta?: boolean;
   compact?: boolean;
@@ -252,8 +255,8 @@ export const fileAgentProps = {
   uploadConfig: createProp<any>('any', Object),
   multiple: booleanProp(fileAgentPropsDefaults.multiple),
   smartBackground: booleanProp(fileAgentPropsDefaults.smartBackground),
-  layout: createProp<'default' | 'list'>('string', String),
-  theme: createProp<'default' | 'rounded'>('string', String),
+  layout: createProp<Layout>('string', String),
+  theme: createProp<Theme>('string', String),
   sortable: createProp<boolean | 'hold' | 'handle'>('string', String),
   meta: booleanProp(fileAgentPropsDefaults.meta),
   compact: booleanProp(fileAgentPropsDefaults.compact),

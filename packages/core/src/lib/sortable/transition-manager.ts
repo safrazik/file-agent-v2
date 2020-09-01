@@ -1,4 +1,4 @@
-type Theme = 'list' | 'default';
+type Layout = 'grid' | 'list' | 'default';
 export interface ElementRect {
   rect: DOMRect;
   element: HTMLElement;
@@ -13,7 +13,7 @@ export class TransitionManager {
     } as Record<string, string>,
   };
   // private transitioningElements: HTMLElement[] = [];
-  constructor(private layout?: Theme) {
+  constructor(private layout?: Layout) {
     if (this.isListLayout) {
       this.options.transitionStyle.transform = 'translate3d(0px, -20px, 0px)';
     }
@@ -102,23 +102,25 @@ export class TransitionManager {
     }
     this.isElementTransitioning(child, true);
     child.style.transition = '';
-    const transform = `translate3d(${first.left - last.left}px, ${first.top - last.top}px, 0)`;
-    child.style.transform = transform;
     this.nextFrame(() => {
-      child.style.transition = `all ${this.options.transitionDuration}ms`;
+      const transform = `translate3d(${first.left - last.left}px, ${first.top - last.top}px, 0)`;
+      child.style.transform = transform;
       this.nextFrame(() => {
-        // child.style.transform = '';
-        child.style.transform = 'translate3d(0, 0, 0)';
-        const onTransitionEnd = (event: Event) => {
-          console.log('onTransitionEnd...');
-          event.stopPropagation();
-          this.nextFrameX(() => {
-            child.style.transition = '';
-          });
-          this.isElementTransitioning(child, false);
-          child.removeEventListener('transitionend', onTransitionEnd, false);
-        };
-        child.addEventListener('transitionend', onTransitionEnd, false);
+        child.style.transition = `all ${this.options.transitionDuration}ms`;
+        this.nextFrame(() => {
+          child.style.transform = '';
+          // child.style.transform = 'translate3d(0, 0, 0)';
+          const onTransitionEnd = (event: Event) => {
+            console.log('onTransitionEnd...');
+            event.stopPropagation();
+            this.nextFrameX(() => {
+              child.style.transition = '';
+            });
+            this.isElementTransitioning(child, false);
+            child.removeEventListener('transitionend', onTransitionEnd, false);
+          };
+          child.addEventListener('transitionend', onTransitionEnd, false);
+        });
       });
     });
   }
@@ -210,71 +212,6 @@ export class TransitionManager {
     oldElementRects: ElementRect[],
     newElementRects: ElementRect[]
   ) {
-    const useAnimationApi = false;
-    // for (const ch of newElements) {
-    //   container.appendChild(ch);
-    // }
-    if (useAnimationApi) {
-      // for (const ch of newElements) {
-      //   container.appendChild(ch);
-      // }
-      // return;
-      for (const elem of newElements) {
-        const oldRect = oldElementRects.filter((elemRect) => elemRect.element === elem)[0].rect;
-        const newRect = newElementRects.filter((elemRect) => elemRect.element === elem)[0].rect;
-        // let isSame = false;
-        if (oldRect.x === newRect.x && oldRect.y === newRect.y) {
-          continue;
-          // isSame = true;
-        }
-        const offsetTransform = `translate3d(${-(newRect.x - oldRect.x)}px, ${-(newRect.y - oldRect.y)}px, 0px)`;
-        console.log('offsetTransform', offsetTransform, oldRect, newRect);
-        if ((elem as any).isAnimating) {
-          // (elem as any).isAnimating.animation.cancel();
-          continue;
-        }
-        const animation = elem.animate(
-          [
-            // keyframes
-            { transform: offsetTransform },
-            { transform: 'translate3d(0px, 0px, 0px)' },
-          ],
-          {
-            // timing options
-            duration: 300,
-            iterations: 1,
-          }
-        );
-        animation.onfinish = (event) => {
-          (elem as any).isAnimating = false;
-        };
-        (elem as any).isAnimating = animation;
-      }
-      return;
-    }
-    // for (const ch of newElements) {
-    //   if (!this.isElementTransitioning(ch)) {
-    //     // const transform = ch.style.transform;
-    //     const style = window.getComputedStyle(ch);
-    //     const transform = style.getPropertyValue('transform');
-    //     console.log('computedTransform', transform);
-    //     if (transform.indexOf('translate') !== -1) {
-    //       const transformArr = transform
-    //         .replace(/translate(3d)?/, '')
-    //         .replace('(', '')
-    //         .replace(')', '')
-    //         .split(',');
-    //       const transitioningPosition = {
-    //         x: parseFloat(transformArr[0].replace('px', '').trim()),
-    //         y: parseFloat(transformArr[1].replace('px', '').trim()),
-    //       };
-    //       console.log('transitioningPosition', transitioningPosition);
-    //     }
-    //     container.appendChild(ch);
-    //   } else {
-    //     container.appendChild(ch);
-    //   }
-    // }
     return this.applyTransitions([], [], newElements, oldElementRects, newElementRects);
   }
 

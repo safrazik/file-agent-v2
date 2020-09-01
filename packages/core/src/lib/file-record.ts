@@ -337,11 +337,11 @@ class FileRecord {
     return name;
   }
 
-  public getName(withExtension = false) {
-    return this.name(!withExtension);
+  public setName(name: string | false) {
+    this.nameWithoutExtension(name);
   }
 
-  public setName(name: string, withExtension = false) {
+  public setNameWithoutExtension(name: string | false) {
     this.nameWithoutExtension(name);
   }
 

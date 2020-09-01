@@ -482,7 +482,7 @@ export class FileAgent extends Component {
   }
 
   cancelRenameFileRecord(fileRecord: FileRecord) {
-    fileRecord.nameWithoutExtension(false);
+    fileRecord.setNameWithoutExtension(false);
     // fileRecord.customName = fileRecord.oldCustomName;
     // if ((fileRecord as any)._filePreview) {
     //   (fileRecord as any)._filePreview.update();
