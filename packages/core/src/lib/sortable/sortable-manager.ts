@@ -137,26 +137,29 @@ export class SortableManager {
       let resolved = false;
       const transitionDuration = 300;
       element.style.transition = `transform ${transitionDuration}ms`;
-      element.style.transform = 'translate3d(0, 0, 0)';
-      const onTransitionEnd = (event: Event) => {
-        event.stopPropagation();
-        if (event.target !== element) {
-          return;
-        }
-        this.nextFrame(() => {
-          element.style.transition = '';
-        });
-        element.removeEventListener('transitionend', onTransitionEnd, false);
-        resolved = true;
-        resolve();
-      };
+      this.nextFrame(() => {
+        element.style.transform = 'translate3d(0, 0, 0)';
+        const onTransitionEnd = (event: Event) => {
+          if (event.target !== element) {
+            return;
+          }
+          event.stopPropagation();
+          this.nextFrame(() => {
+            element.style.transition = '';
+          });
+          element.removeEventListener('transitionend', onTransitionEnd, false);
+          resolved = true;
+          resolve();
+        };
+        element.addEventListener('transitionend', onTransitionEnd, false);
+      });
       setTimeout(() => {
         if (!resolved) {
           resolved = true;
+          element.style.transition = '';
           resolve();
         }
       }, transitionDuration + 100);
-      element.addEventListener('transitionend', onTransitionEnd, false);
     });
   }
 
@@ -425,13 +428,15 @@ export class SortableManager {
         const otherChildren = sortedElements;
         //   otherChildren.splice(otherChildren.indexOf(child), 1);
         // this.transitionManager.applyTransitions([], [], otherChildren, oldElementRects, sortedElementRects);
-        this.transitionManager.sortElements(
+        // setTimeout(() => {
+        this.transitionManager?.sortElements(
           this.container,
           this.elements,
           sortedElements,
           oldElementRects,
           sortedElementRects
         );
+        // }, 0);
       }
       this.elements = sortedElements;
       this.elementRects = sortedElementRects;
@@ -518,6 +523,7 @@ export class SortableManager {
     const element = this.movingInfo.element;
     this.calculateElementRects();
     const rect = this.getRectForElement(element);
+    // element.style.transition = '';
     element.style.transition = '';
     const clonedElement = this.getElementCloned(element, rect);
     // clonedElement.style.opacity = '0.5'

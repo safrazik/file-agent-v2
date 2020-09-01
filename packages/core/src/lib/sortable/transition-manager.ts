@@ -77,6 +77,59 @@ export class TransitionManager {
       this.nextFrame(callback);
     });
   }
+
+  private applyTransitionStyle(child: HTMLElement, style?: Record<string, string>) {
+    if (!style) {
+      style = this.options.transitionStyle;
+    }
+    for (const prop in style) {
+      if (style.hasOwnProperty(prop)) {
+        child.style[prop as any] = style[prop];
+      }
+    }
+  }
+  private resetTransitionStyle(child: HTMLElement) {
+    const resetStyle: Record<string, string> = {};
+    const style = this.options.transitionStyle;
+    for (const prop in style) {
+      if (style.hasOwnProperty(prop)) {
+        resetStyle[prop] = '';
+      }
+    }
+    this.applyTransitionStyle(child, resetStyle);
+  }
+  addElement(child: HTMLElement) {
+    if (this.isElementTransitioning(child)) {
+      console.log('this.isElementTransitioning(child)', this.isElementTransitioning(child));
+      // return /*isElementTransitioning*/;
+    }
+    this.isElementTransitioning(child, true);
+    child.style.transition = '';
+    this.nextFrame(() => {
+      this.applyTransitionStyle(child);
+      this.nextFrame(() => {
+        child.style.transition = `all ${this.options.transitionDuration}ms`;
+        this.nextFrame(() => {
+          this.resetTransitionStyle(child);
+          const onTransitionEnd = (event: Event) => {
+            if (event.target !== child) {
+              console.log('transition ended some other el');
+              return;
+            }
+            event.stopPropagation();
+            console.log('transition ended: SAME CHILD');
+            this.nextFrame(() => {
+              child.style.transition = '';
+            });
+            this.isElementTransitioning(child, false);
+            child.removeEventListener('transitionend', onTransitionEnd, false);
+          };
+          child.addEventListener('transitionend', onTransitionEnd, false);
+        });
+      });
+    });
+  }
+
   transformOtherElement(child: HTMLElement, first: DOMRect, last: DOMRect) {
     let isTransitioning = false;
     if (this.isElementTransitioning(child)) {
@@ -111,9 +164,12 @@ export class TransitionManager {
           child.style.transform = '';
           // child.style.transform = 'translate3d(0, 0, 0)';
           const onTransitionEnd = (event: Event) => {
-            console.log('onTransitionEnd...');
+            if (event.target !== child) {
+              return;
+            }
             event.stopPropagation();
-            this.nextFrameX(() => {
+            console.log('onTransitionEnd...');
+            this.nextFrame(() => {
               child.style.transition = '';
             });
             this.isElementTransitioning(child, false);
@@ -124,79 +180,37 @@ export class TransitionManager {
       });
     });
   }
-  private applyTransitionStyle(child: HTMLElement, style?: Record<string, string>) {
-    if (!style) {
-      style = this.options.transitionStyle;
-    }
-    for (const prop in style) {
-      if (style.hasOwnProperty(prop)) {
-        child.style[prop as any] = style[prop];
-      }
-    }
-  }
-  private resetTransitionStyle(child: HTMLElement) {
-    const resetStyle: Record<string, string> = {};
-    const style = this.options.transitionStyle;
-    for (const prop in style) {
-      if (style.hasOwnProperty(prop)) {
-        resetStyle[prop] = '';
-      }
-    }
-    this.applyTransitionStyle(child, resetStyle);
-  }
-  addElement(child: HTMLElement) {
-    if (this.isElementTransitioning(child)) {
-      console.log('this.isElementTransitioning(child)', this.isElementTransitioning(child));
-      // return /*isElementTransitioning*/;
-    }
-    this.isElementTransitioning(child, true);
-    child.style.transition = '';
-    this.applyTransitionStyle(child);
-    this.nextFrame(() => {
-      child.style.transition = `all ${this.options.transitionDuration}ms`;
-      this.nextFrame(() => {
-        this.resetTransitionStyle(child);
-        const onTransitionEnd = (event: Event) => {
-          event.stopPropagation();
-          if (event.target !== child) {
-            console.log('transition ended some other el');
-            return;
-          }
-          console.log('transition ended: SAME CHILD');
-          this.nextFrame(() => {
-            child.style.transition = '';
-          });
-          this.isElementTransitioning(child, false);
-          child.removeEventListener('transitionend', onTransitionEnd, false);
-        };
-        child.addEventListener('transitionend', onTransitionEnd, false);
-      });
-    });
-  }
 
   removeElement(child: HTMLElement) {
     if (this.isElementTransitioning(child)) {
       // return /*isElementTransitioning*/;
     }
     this.isElementTransitioning(child, true);
-    this.resetTransitionStyle(child);
-    child.style.transition = `all ${this.options.transitionDuration}ms`;
+    child.style.transition = '';
     this.nextFrame(() => {
-      this.applyTransitionStyle(child);
-    });
-    const onTransitionEnd = (event: Event) => {
-      event.stopPropagation();
-      if (event.target !== child) {
-        return;
-      }
-      console.log('on remove transition end...');
-      child.style.transition = '';
       this.resetTransitionStyle(child);
-      child.parentElement?.removeChild(child);
-      this.isElementTransitioning(child, false);
-      child.removeEventListener('transitionend', onTransitionEnd, false);
-    };
-    child.addEventListener('transitionend', onTransitionEnd, false);
+      this.nextFrame(() => {
+        child.style.transition = `all ${this.options.transitionDuration}ms`;
+        this.nextFrame(() => {
+          this.applyTransitionStyle(child);
+          const onTransitionEnd = (event: Event) => {
+            if (event.target !== child) {
+              return;
+            }
+            event.stopPropagation();
+            console.log('on remove transition end...');
+            // child.style.transition = '';
+            // this.nextFrame(() => {
+            //   this.resetTransitionStyle(child);
+            // });
+            child.parentElement?.removeChild(child);
+            this.isElementTransitioning(child, false);
+            child.removeEventListener('transitionend', onTransitionEnd, false);
+          };
+          child.addEventListener('transitionend', onTransitionEnd, false);
+        });
+      });
+    });
   }
 
   removeElements(children: HTMLElement[]) {
