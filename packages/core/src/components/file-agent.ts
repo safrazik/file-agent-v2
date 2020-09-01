@@ -686,7 +686,8 @@ export class FileAgent extends Component {
   }
 
   updateWrapper() {
-    this.$el.className = `layout-${this.$props.layout}
+    this.$el.className = `file-agent-wrapper
+      layout-${this.$props.layout}
       theme-${this.$props.theme}
       is-sortable-${this.isSortable ? 'enabled' : 'disabled'}
       ${this.$props.sortable === 'hold' ? 'is-sortable-hold' : ''}
