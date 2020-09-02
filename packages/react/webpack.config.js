@@ -134,7 +134,7 @@ module.exports = (env, argv) => {
       createConfig(
         {
           mode: 'production',
-          entry: path.join(__dirname, 'src', 'index.tsx'),
+          entry: entry,
           outputFilename: '[name].min.js',
           externals: externals,
           // mode: 'none',

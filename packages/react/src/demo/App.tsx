@@ -148,7 +148,7 @@ export default function DemoApp() {
                 }, 1000);
               });
             },
-            onInput(fileRecords) {
+            onChange(fileRecords) {
               console.log('haha all', fileRecords);
             },
             // },
