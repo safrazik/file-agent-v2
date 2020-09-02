@@ -1,32 +1,63 @@
 .file-agent {
-  &.file-input-wrapper {
+  .is-draggable & {
     position: relative;
     border: 2px dashed #aaa;
     text-align: center;
     transition: all 600ms;
   }
 
-  &.file-input-wrapper.is-drag-over,
-  .is-drag-over &.file-input-wrapper {
+  // &.file-input-wrapper.is-drag-over,
+  // .is-drag-over &.file-input-wrapper {
+  //   border-color: #f61a1a;
+  //   box-shadow: inset 0px 0px 20px 1px #f61a1a;
+  // }
+
+  // &.file-input-wrapper.is-drag-valid.is-drag-over,
+  // .is-drag-valid.is-drag-over &.file-input-wrapper {
+  //   border-color: #54d500;
+  //   box-shadow: inset 0px 0px 20px 1px #54d500;
+  // }
+  .is-drag-invalid & {
     border-color: #f61a1a;
     box-shadow: inset 0px 0px 20px 1px #f61a1a;
   }
-
-  &.file-input-wrapper.is-drag-valid.is-drag-over,
-  .is-drag-valid.is-drag-over &.file-input-wrapper {
+  .is-drag-valid & {
     border-color: #54d500;
     box-shadow: inset 0px 0px 20px 1px #54d500;
   }
+  .is-drag-over & {
+    opacity: 0.75;
+    transition: all 300ms;
+  }
 }
 
-.file-agent-drag-over {
-  opacity: 0.75;
-  transition: all 300ms;
+.is-drag-overr *
+// , .file-agent-drag-over *
+{
+  pointer-events: none !important;
 }
 
-.file-agent-drag-over.file-agent-drag-invalid {
-  box-shadow: inset 0px 0px 20px 1px #f61a1a;
+.is-drag-overr::before
+// , .file-agent-drag-over::before
+{
+  content: ' ';
 }
-.file-agent-drag-over.file-agent-drag-valid {
-  box-shadow: inset 0px 0px 20px 1px #54d500;
-}
+
+// .file-agent-drag-over {
+//   opacity: 0.75;
+//   transition: all 300ms;
+// }
+
+// .file-agent-drag-over.file-agent-drag-invalid {
+//   .file-agent {
+//     border-color: #f61a1a;
+//     box-shadow: inset 0px 0px 20px 1px #f61a1a;
+//   }
+// }
+
+// .file-agent-drag-over.file-agent-drag-valid {
+//   .file-agent {
+//     border-color: #54d500;
+//     box-shadow: inset 0px 0px 20px 1px #54d500;
+//   }
+// }

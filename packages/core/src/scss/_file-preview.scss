@@ -169,23 +169,23 @@
     }
   }
 
-  &.has-multiple .file-preview,
-  &.is-single .is-deletable .file-preview {
-    z-index: 11;
-  }
-
   .is-deletable .file-preview .file-name {
     padding-right: 20px;
   }
+}
 
-  &.no-meta .file-preview {
-    .file-ext,
-    .file-name,
-    .file-size,
-    .image-dimension,
-    &::before,
-    &::after {
-      display: none;
-    }
+.no-meta .file-agent .file-preview {
+  .file-ext,
+  .file-name,
+  .file-size,
+  .image-dimension,
+  &::before,
+  &::after {
+    display: none;
   }
+}
+
+.has-multiple .file-agent .file-preview,
+.is-single .file-agent .is-deletable .file-preview {
+  z-index: 11;
 }

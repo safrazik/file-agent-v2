@@ -6,16 +6,6 @@
   }
 }
 
-.is-drag-over *,
-.file-agent-drag-over * {
-  pointer-events: none !important;
-}
-
-.is-drag-over::before,
-.file-agent-drag-over::before {
-  content: ' ';
-}
-
 .is-disabled .file-agent {
   opacity: 0.65;
   pointer-events: none;

@@ -597,9 +597,9 @@ export class FileAgent extends Component {
     if (!event.dataTransfer) {
       return;
     }
-    this.updateDragStatus(true);
     event.stopPropagation();
     event.preventDefault();
+    this.updateDragStatus(true);
     dragCounter++;
     event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   }
@@ -608,9 +608,9 @@ export class FileAgent extends Component {
     if (!event.dataTransfer) {
       return;
     }
-    this.updateDragStatus(true);
     event.stopPropagation();
     event.preventDefault();
+    this.updateDragStatus(true);
     event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   }
 
@@ -654,20 +654,21 @@ export class FileAgent extends Component {
   }
 
   updateDragStatus(isDragging: boolean) {
+    if (this.$props.draggable === false) {
+      return;
+    }
     // console.log('update drag status');
     if (this.isDragging === isDragging) {
       return;
     }
     // console.log('updating drag status...');
     this.isDragging = isDragging;
-    if (this.$props.draggable === false) {
-      return;
-    }
     const dragEl =
       this.$props.draggable === undefined || this.$props.draggable === true
         ? this.$el
         : (this.$props.draggable as HTMLElement);
     this.toggleClass(dragEl, 'file-agent-drag-over', this.isDragging);
+    this.toggleClass(this.$el, 'is-drag-over', this.isDragging);
     if (this.isDragging) {
       // dragEl.classList.add('is-drag-over');
       // dragEl.classList.add('file-agent-drag-over');
@@ -676,9 +677,15 @@ export class FileAgent extends Component {
         this.$props.readonly === true ||
         (this.hasMultiple && !this.canAddMore)
       );
+      this.toggleClass(this.$el, 'is-drag-valid', isValid);
+      this.toggleClass(this.$el, 'is-drag-invalid', !isValid);
       this.toggleClass(dragEl, 'file-agent-drag-valid', isValid);
       this.toggleClass(dragEl, 'file-agent-drag-invalid', !isValid);
     } else {
+      this.$el.classList.remove('is-drag-valid');
+      this.$el.classList.remove('is-drag-invalid');
+      dragEl.classList.remove('file-agent-drag-valid');
+      dragEl.classList.remove('file-agent-drag-invalid');
       // dragEl.classList.remove('is-drag-over');
       // dragEl.classList.remove('file-agent-drag-over');
     }
@@ -695,20 +702,21 @@ export class FileAgent extends Component {
       ${this.$props.sortable === true ? 'is-sortable-immediately' : ''}
       ${this.isSorting ? 'is-sorting' : ''}
       ${this.isSortingActive ? 'is-sorting-active' : ''}
-      ${this.isDragging ? 'is-drag-over' : ''}
+      ${this.isDragging ? 'is-drag-overr' : ''}
       ${this.$props.disabled === true ? 'is-disabled' : ''}
       ${this.$props.readonly === true ? 'is-readonly' : ''}
-      ${
-        !(this.$props.disabled === true || this.$props.readonly === true || (this.hasMultiple && !this.canAddMore))
-          ? 'is-drag-valid'
-          : ''
-      }
-    `;
-    this.getRef('container').className = `grid-block-wrapper file-agent file-input-wrapper
+      ${this.$props.draggable !== false ? 'is-draggable' : ''}
       ${!!this.$props.compact ? 'is-compact' : ''}
       ${!this.hasMultiple ? 'is-single' : ''}
       ${this.hasMultiple ? 'has-multiple' : ''}
       ${this.$props.meta === false ? 'no-meta' : ''}
+      ${
+        !(this.$props.disabled === true || this.$props.readonly === true || (this.hasMultiple && !this.canAddMore))
+          ? 'is-drag-available'
+          : ''
+      }
+    `;
+    this.getRef('container').className = `grid-block-wrapper file-agent file-input-wrapper
     `;
   }
 

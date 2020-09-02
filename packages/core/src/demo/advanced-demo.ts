@@ -10,7 +10,11 @@ const maxSize = '4MB';
 
 export class AdvancedDemo extends Component {
   // props = createFileAgentProps();
-  fileAgent = new FileAgent(createFileAgentProps());
+  fileAgent = new FileAgent(
+    createFileAgentProps({
+      draggable: document.getElementById('file-drag-area') as HTMLElement,
+    })
+  );
   propsForm: PropsForm;
   constructor() {
     super();
