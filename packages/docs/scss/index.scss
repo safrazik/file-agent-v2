@@ -44,8 +44,9 @@
     h1 {
       color: #eee;
     }
-    h3 {
-      color: #aaa;
+    h3,
+    h3 * {
+      color: #aaa !important;
     }
   }
 
