@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "module": "esnext"
+  },
+  "include": ["next-env.d.ts", "shims.d.ts", "**/*.ts", "**/*.tsx", "../core/src/**/*", "../react/src/**/*"],
+  "exclude": ["node_modules"]
+}

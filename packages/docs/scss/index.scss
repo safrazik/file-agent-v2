@@ -1,0 +1,90 @@
+.page-home {
+  .appbar-homepage-muted {
+    h6 {
+      visibility: hidden;
+    }
+    .appbar-main {
+      background: #333;
+      transition: all 300ms;
+      .left-action-button svg,
+      .right-action-button svg {
+        fill: #eee;
+      }
+    }
+  }
+  .main-content::before {
+    content: ' ';
+    background: #333;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 0;
+  }
+  .intro-area {
+    height: 100%;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 24px;
+    &::before {
+      content: ' ';
+      background: #333;
+      //   width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: -1;
+      margin-left: -24px;
+      margin-right: -24px;
+    }
+    h1 {
+      color: #eee;
+    }
+    h3 {
+      color: #aaa;
+    }
+  }
+
+  .content-area {
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    .content-card {
+      border-radius: 20px;
+    }
+  }
+
+  .landing-demo {
+    text-align: center;
+    .file-agent {
+      // background: #333;
+      background: #424242;
+    }
+    &.layout-list {
+      // margin-top: 30px;
+      .file-agent-wrapper {
+        max-width: 480px;
+        margin: auto;
+      }
+    }
+    // .theme-circle,
+    // .theme-light-circle,
+    // .theme-dark-circle,
+    // .theme-light,
+    // .theme-dark,
+    // .theme-rounded {
+    //   .file-agent {
+    //     border-radius: 20px;
+    //   }
+    //   .layout-list {
+    //     .file-agent {
+    //       border-radius: 15px;
+    //     }
+    //   }
+    // }
+  }
+}

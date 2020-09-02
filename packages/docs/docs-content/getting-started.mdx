@@ -1,0 +1,90 @@
+# Getting Started
+
+## Table of Contents
+
+## React
+
+### Installation
+
+Installing with `npm` or `yarn`
+
+```
+npm install @file-agent/react
+yarn add @file-agent/react
+```
+
+### Usage
+
+TypeScript/JavaScript
+
+```javascript
+import React from 'react';
+import { FileRecord } from '@file-agent/core';
+import { FileAgent } from '@file-agent/react';
+
+export default function FileAgentDemo() {
+  const [fileRecords, setFileRecords] = useState([] as FileRecord[]);
+  // set preloaded files
+  FileRecord.fromRawArray([
+    {
+      name: 'Some file.zip',
+      size: 7838844,
+      type: 'application/zip'
+    }
+  ]).then(setFileRecords);
+  return <FileAgent
+    fileRecords={fileRecords}
+    onChange={setFileRecords}
+  ></FileAgent>;
+}
+```
+
+## Vue
+
+### Installation
+
+Installing with `npm` or `yarn`
+
+```
+npm install @file-agent/vue
+yarn add @file-agent/vue
+```
+
+### Usage
+
+TypeScript/JavaScript
+
+```javascript
+import React from 'react';
+import { FileRecord } from '@file-agent/core';
+import { FileAgent } from '@file-agent/vue';
+
+export default {
+  data(){
+    return {
+      fileRecords: [] as FileRecord[]
+    }
+  },
+  methods: {},
+  created(){
+    // set preloaded files
+    FileRecord.fromRawArray([
+      {
+        name: 'Some file.zip',
+        size: 7838844,
+        type: 'application/zip'
+      }
+    ]).then((fileRecords) => {
+      this.fileRecords = fileRecords;
+    });
+  }
+}
+```
+
+```html
+<template>
+  <FileAgent v-model="fileRecords"></FileAgent>
+</template>
+```
+
+## Vanilla Js/Other Frameworks
