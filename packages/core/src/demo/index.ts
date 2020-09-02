@@ -7,6 +7,9 @@
 import { FileAgent, FileIcon, FilePreview, FileRecord, plugins } from '..';
 import { AdvancedDemo } from './advanced-demo';
 
+import '../scss/index.scss';
+import '../scss/themes/index.scss';
+
 plugins.tus = (window as any).tus;
 
 const fileIcon = new FileIcon({

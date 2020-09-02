@@ -87,8 +87,9 @@ module.exports = (env, argv) => {
     entry['file-agent-demo'] = path.join(__dirname, 'src', 'demo', 'index.ts');
     // entry['themes/test'] = path.join(__dirname, 'src', 'demo', 'index.ts');
   } else {
-    // entry['themes/test'] = path.join(__dirname, 'src', 'scss/themes/rounded/index.scss');
     entry['file-agent'] = path.join(__dirname, 'src', 'index.ts');
+    entry['css/file-agent'] = path.join(__dirname, 'src/scss/index.scss');
+    entry['css/file-agent-themes'] = path.join(__dirname, 'src/scss/themes/index.scss');
     configs.push(
       createConfig(
         {

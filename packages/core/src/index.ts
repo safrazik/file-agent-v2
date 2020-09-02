@@ -6,7 +6,7 @@ export * from './lib/props';
 export * from './lib/uploader-interface';
 import plugins from './lib/plugins';
 
-import './scss/index.scss';
-import './scss/themes/index.scss';
+// import './scss/index.scss';
+// import './scss/themes/index.scss';
 
 export { FileRecord, plugins };
