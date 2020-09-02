@@ -271,7 +271,7 @@ export default function Layout(props: LayoutProps) {
               <NextLink href="/" passHref>
                 <Link style={{ color: 'inherit', textDecoration: 'none' }}>
                   <img
-                    src="/assets/icon.png"
+                    src={branding.path('/assets/icon.png')}
                     style={{
                       height: '40px',
                       marginRight: '8px',

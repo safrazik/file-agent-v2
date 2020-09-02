@@ -36,7 +36,7 @@ const Home: NextPage<{ userAgent: string }> = ({ userAgent }) => {
           <div style={{ textAlign: 'center' }}>
             <h1 style={{ fontSize: '30px', lineHeight: '30px' }}>
               <img
-                src="/assets/icon.png"
+                src={branding.path('/assets/icon.png')}
                 style={{
                   height: '46px',
                   marginBottom: '-8px',
