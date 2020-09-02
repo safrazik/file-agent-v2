@@ -10,5 +10,11 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "packages/core/src/demo",
+    "packages/react/src/demo",
+    "packages/uploader/src/demo",
+    "packages/vue"
+  ]
 }
