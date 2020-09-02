@@ -107,7 +107,7 @@ module.exports = (env, argv) => {
   const rules = [];
   let alias = {};
   if (isDebugging) {
-    entry['react-file-agent-demo'] = path.join(__dirname, 'src', 'demo', 'index.tsx');
+    entry['react-file-agent-demo'] = path.join(__dirname, 'src', 'demo', 'index.ts');
     // rules.push({
     //   test: /\.css$/i,
     //   use: ['style-loader', 'css-loader'],
@@ -122,7 +122,7 @@ module.exports = (env, argv) => {
       // '@file-agent/core/dist/file-agent.min.js$': path.resolve(__dirname, '../core/src'),
     };
   } else {
-    entry['react-file-agent'] = path.join(__dirname, 'src', 'index.tsx');
+    entry['react-file-agent'] = path.join(__dirname, 'src', 'index.ts');
 
     externals['@file-agent/core'] = {
       commonjs: '@file-agent/core',
