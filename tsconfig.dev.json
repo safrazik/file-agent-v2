@@ -8,7 +8,5 @@
       "@file-agent/react": ["packages/react/src"],
       "@file-agent/vue": ["packages/vue/src"]
     }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  }
 }

@@ -1,6 +1,8 @@
 # compiled output
 # dist
 # types
+.next
+out/
 _site
 
 # dependencies

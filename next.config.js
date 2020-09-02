@@ -13,6 +13,16 @@ module.exports = withMDX({
     // Note: we provide webpack above so you should not `require` it
     // Perform customizations to webpack config
     // config.plugins.push(new webpack.IgnorePlugin(/\/__tests__\//));
+    config.module.rules.push({
+      test: /\.html$/i,
+      loader: 'html-loader',
+      options: {
+        minimize: {
+          removeComments: true,
+          collapseWhitespace: true,
+        },
+      },
+    });
     if (dev) {
       // config.resolve.alias['@file-agent/core'] = path.resolve(__dirname, '../core/src');
       // config.resolve.alias['@file-agent/react'] = path.resolve(__dirname, '../react/src');

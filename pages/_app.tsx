@@ -18,8 +18,8 @@ import NextLink from 'next/link';
 import Link from '@material-ui/core/Link';
 
 // import '@file-agent/core/dist/file-agent.css';
-import '@file-agent/core/dist/css/file-agent.css';
-import '@file-agent/core/dist/css/file-agent-themes.css';
+// import '@file-agent/core/scss/index.scss';
+// import '@file-agent/core/dist/css/file-agent-themes.css';
 import '../scss/index.scss';
 
 const NextLinkComponent = (props: any) => (

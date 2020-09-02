@@ -131,7 +131,7 @@ export class App extends Component {
             return {};
           },
         },
-        this.fileAgent.$props.fileRecords,
+        this.fileAgent.props.fileRecords,
         undefined,
         (progress) => {
           //
@@ -146,10 +146,11 @@ export class App extends Component {
 
   updateSettings() {
     writeSettings();
-    this.fileAgent.$props.auto = settings.auto;
-    this.fileAgent.$props.resumable = settings.resumable;
-    this.fileAgent.$props.uploadUrl = settings.resumable ? settings.tusUploadUrl : settings.uploadUrl;
-    this.fileAgent.update();
+    this.fileAgent.setProps({
+      auto: settings.auto,
+      resumable: settings.resumable,
+      uploadUrl: settings.resumable ? settings.tusUploadUrl : settings.uploadUrl,
+    });
   }
 
   updateUi() {
