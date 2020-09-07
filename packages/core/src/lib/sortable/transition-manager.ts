@@ -19,6 +19,17 @@ export class TransitionManager {
     }
   }
 
+  public static getElementRects(elements: HTMLElement[] | HTMLCollection | NodeList) {
+    const elementRects: ElementRect[] = [];
+    // tslint:disable-next-line
+    for (let i = 0; i < elements.length; i++) {
+      // elements may not be an array
+      const elem = elements[i] as HTMLElement;
+      elementRects.push({ element: elem, rect: elem.getBoundingClientRect() });
+    }
+    return elementRects;
+  }
+
   get transitioningElements() {
     return transitioningElements;
   }

@@ -47,9 +47,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import FileIcon from '../components/file-icon';
-import FilePreview from '../components/file-preview';
-import FileAgent from '../components/file-agent';
+import { FileIcon, FilePreview, FileAgent } from '..';
 import { FileRecord, plugins } from '@file-agent/core';
 
 plugins.tus = (window as any).tus;

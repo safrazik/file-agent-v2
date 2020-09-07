@@ -89,13 +89,13 @@ const Home: NextPage<{ userAgent: string }> = ({ userAgent }) => {
         <div className="content-area">
           <Card className="content-card">
             <CardContent>
-              {/* <h3>Advanced Demo</h3> */}
-              {/* <AdvancedDemo /> */}
-              <IndexDocs />
+              <h3>Advanced Demo</h3>
+              <AdvancedDemo />
             </CardContent>
           </Card>
         </div>
       </div>
+      <IndexDocs />
       <FooterLinks step={0} next={{ link: '/getting-started', label: 'Getting Started' }} />
     </Layout>
   );

@@ -20,15 +20,18 @@ export default Vue.extend({
     this.renderCore();
   },
   methods: {
-    renderCore() {
+    renderCore(updateUi?: boolean) {
       if (this.coreFileAgent) {
-        this.coreFileAgent.setProps(this.$props as FileAgentProps);
+        this.coreFileAgent.setProps(this.$props as FileAgentProps, updateUi);
+      } else {
+        this.coreFileAgent = new CoreFileAgent(this.$props as FileAgentProps);
+      }
+      if (this.coreFileAgentRendered) {
         return;
       }
       if (!this.$el) {
         return;
       }
-      this.coreFileAgent = new CoreFileAgent(this.$props as FileAgentProps);
       this.coreFileAgent.render(this.$el as HTMLElement);
     },
     propUpdated(propName: string, value: any) {

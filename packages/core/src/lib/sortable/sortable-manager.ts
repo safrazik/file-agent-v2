@@ -30,6 +30,10 @@ interface MovingInfo {
   clonedElement: HTMLElement;
   rect: Rect;
   initialized: Date | true;
+  oldIndex?: number;
+  movingIndex?: number;
+  newIndex: number;
+  origin: SortableManager;
 }
 
 type EventHandler = (event: Event | any) => void;
@@ -71,27 +75,42 @@ const removeAllListeners = (targetNode: Node | Window | Document, event: string,
   );
 };
 
-let movingInfo: MovingInfo | undefined;
+let movingInfoGlobal: MovingInfo | undefined;
 // const movingInfo: MovingInfo | undefined = undefined;
 
-export class SortableManager {
+// type SorterFunction<U> = <V extends U>(arr: V) => V;
+// type SorterFunction<U> = <V extends any[] = any[]>(arr: V) => V;
+// type SorterFunction2 = <V extends any[] = any[]>(arr: V) => V;
+type SorterFunction<U> = <V extends U>(arr: V) => V;
+type OnChangeFunction<U> = (oldIndex: number, newIndex: number, sorter: SorterFunction<U>) => void;
+
+let instanceId = 0;
+export class SortableManager<T extends any[] = any[]> {
+  _instanceId: number;
   hasTouch: boolean;
-  elements: HTMLElement[];
+  elements: HTMLElement[] = [];
+  disabledElements: HTMLElement[] = [];
+  frozenElements: HTMLElement[] = [];
   //   lastPosition?: Position;
   //   returnPosition?: Position;
-  // movingInfo?: MovingInfo;
+  movingInfoLocal?: MovingInfo;
   elementRects: ElementRect[] = [];
   eventListners: Record<string, any> = {};
   handlerClass = 'file-agent-sortable-handle';
   activeElementClass = 'active-sorting-item';
   activeContainerClass = 'is-sorting-active';
-  constructor(
-    private container: HTMLElement,
-    private disabledElements: HTMLElement[],
-    private frozenElements: HTMLElement[] = [],
-    private transitionManager?: TransitionManager
-  ) {
+  onSort?: OnChangeFunction<T>;
+  onSortEnd?: OnChangeFunction<T>;
+  constructor(private container: HTMLElement, private transitionManager?: TransitionManager) {
+    instanceId = instanceId + 1;
+    this._instanceId = instanceId;
     this.hasTouch = document.ontouchstart !== undefined;
+  }
+
+  setElements(container: HTMLElement, disabledElements: HTMLElement[] = [], frozenElements: HTMLElement[] = []) {
+    this.container = container;
+    this.disabledElements = disabledElements;
+    this.frozenElements = frozenElements;
     this.elements = [];
     // tslint:disable-next-line
     for (let i = 0; i < container.children.length; i++) {
@@ -103,8 +122,53 @@ export class SortableManager {
     }
   }
 
+  // onSort<U extends T | undefined = undefined>(onChangeFn: OnChangeFunction<U>, dataArray?: U) {
+  //   this.onSortFn = onChangeFn as any;
+  //   this.dataArray = dataArray;
+  // }
+
+  // onSort(onChangeFn: OnChangeFunction<T>) {
+  //   this.onSortFn = onChangeFn as any;
+  // }
+
+  // onSortEnd(onChangeFn: OnChangeFunction<T>) {
+  //   this.onSortEndFn = onChangeFn as any;
+  // }
+
+  private createSorterFunction(oldIndex: number, newIndex: number): SorterFunction<T> {
+    return ((dataArray) => {
+      return utils.arrayMove(dataArray, oldIndex, newIndex);
+    }) as SorterFunction<T>;
+  }
+
+  private invokeOnSort(oldIndex: number, newIndex: number) {
+    if (!this.onSort) {
+      return;
+    }
+    this.onSort(oldIndex, newIndex, this.createSorterFunction(oldIndex, newIndex));
+  }
+
+  private invokeOnSortEnd(oldIndex: number, newIndex: number) {
+    if (!this.onSortEnd) {
+      return;
+    }
+    if (oldIndex === newIndex) {
+      return;
+    }
+    this.onSortEnd(oldIndex, newIndex, this.createSorterFunction(oldIndex, newIndex));
+  }
+
   get movingInfo() {
-    return movingInfo;
+    return this.movingInfoLocal;
+    // return movingInfoGlobal;
+    // if (movingInfoGlobal && movingInfoGlobal.origin === this) {
+    //   return movingInfoGlobal;
+    // }
+    // return undefined;
+  }
+  set movingInfo(mvInfo: MovingInfo | undefined) {
+    this.movingInfoLocal = mvInfo;
+    movingInfoGlobal = mvInfo;
   }
 
   // private
@@ -259,17 +323,18 @@ export class SortableManager {
   createMovingInfo() {
     const x = -1;
     const y = -1;
-    movingInfo = {
-      currentPosition: { x, y },
-      returnPosition: { x, y },
-      startPosition: { x, y },
-      lastPosition: { x, y },
-    } as MovingInfo;
-    return movingInfo;
+    const mvInfo: MovingInfo = {} as MovingInfo;
+    mvInfo.currentPosition = { x, y };
+    mvInfo.returnPosition = { x, y };
+    mvInfo.startPosition = { x, y };
+    mvInfo.lastPosition = { x, y };
+    mvInfo.origin = this;
+    this.movingInfo = mvInfo;
+    return this.movingInfo;
   }
 
   destroyMovingInfo() {
-    movingInfo = undefined;
+    this.movingInfo = undefined;
   }
 
   getRectForElement(element: HTMLElement): Rect {
@@ -409,6 +474,9 @@ export class SortableManager {
       // console.log('intersecting...', intersecting.index, intersecting.child);
       const sortedElements = utils.arrayMove(this.elements, elementIndex, intersecting.index, this.frozenElements);
       // const sortedChildRects = utils.arrayMove(this.childRects, childIndex, intersecting.index);
+      if (!this.elementRects.length) {
+        this.calculateElementRects();
+      }
       const oldElementRects = this.elementRects;
       const sortedElementRects: typeof oldElementRects = [];
       let idx = -1;
@@ -417,6 +485,11 @@ export class SortableManager {
         sortedElementRects.push({ element: ch, rect: this.elementRects[idx].rect });
         // this.container.appendChild(ch);
       }
+
+      this.movingInfo.movingIndex = elementIndex;
+      this.movingInfo.newIndex = intersecting.index;
+
+      this.invokeOnSort(elementIndex, intersecting.index);
 
       if (elementIndex > intersecting.index) {
         (element.parentNode as HTMLElement).insertBefore(element, this.elements[intersecting.index]);
@@ -429,7 +502,7 @@ export class SortableManager {
         //   otherChildren.splice(otherChildren.indexOf(child), 1);
         // this.transitionManager.applyTransitions([], [], otherChildren, oldElementRects, sortedElementRects);
         // setTimeout(() => {
-        this.transitionManager?.sortElements(
+        this.transitionManager.sortElements(
           this.container,
           this.elements,
           sortedElements,
@@ -450,13 +523,13 @@ export class SortableManager {
   }
 
   calculateElementRects() {
-    this.elementRects = [];
-    for (const element of this.elements) {
-      this.elementRects.push({ element, rect: element.getBoundingClientRect() });
-    }
+    this.elementRects = TransitionManager.getElementRects(this.elements);
   }
 
   endMoving() {
+    if (this.movingInfo && this.movingInfo.oldIndex !== undefined && this.movingInfo.newIndex !== undefined) {
+      this.invokeOnSortEnd(this.movingInfo.oldIndex, this.movingInfo.newIndex);
+    }
     if (this.movingInfo && this.movingInfo.initialized === true) {
       console.log('eeennnnnnnnnn');
       // clonedChild.style.left = this.returnPosition.x - this.lastPosition.x + 'px';
@@ -521,6 +594,7 @@ export class SortableManager {
     this.movingInfo.initialized = true;
     this.container.classList.add(this.activeContainerClass);
     const element = this.movingInfo.element;
+    this.movingInfo.oldIndex = this.elements.indexOf(element);
     this.calculateElementRects();
     const rect = this.getRectForElement(element);
     // element.style.transition = '';
@@ -603,8 +677,8 @@ export class SortableManager {
   }
 
   removeGlobalMouseEvents() {
-    removeAllListeners(window, 'mousemove', this.container);
-    removeAllListeners(window, 'mouseup', this.container);
+    removeAllListeners(window, 'mousemove', this /* .container */);
+    removeAllListeners(window, 'mouseup', this /* .container */);
   }
 
   registerGlobalMouseEvents(holdDelay = 0) {
@@ -636,7 +710,7 @@ export class SortableManager {
         // console.log('onMouseMOveeeee.....');
         this.eventMove(event, holdDelay);
       },
-      this.container
+      this /* .container */
     );
     addListener(
       window,
@@ -645,7 +719,7 @@ export class SortableManager {
         console.log('onMouseUPppppppppppppp.....');
         this.eventEnd(event);
       },
-      this.container
+      this /* .container */
     );
     // document.addEventListener('touchmove', function(event){
     // 	return RocketBar.handlerMove(event);
@@ -700,6 +774,8 @@ export class SortableManager {
   }
 
   disable() {
+    this.onSort = undefined;
+    this.onSortEnd = undefined;
     this.resetMoving();
     this.removeEvents();
     this.removeHandles();

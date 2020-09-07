@@ -82,17 +82,17 @@ export default class DocsApp extends App<{}, {}, { themeOptions: ThemeOptions }>
       <React.Fragment>
         <Head>
           <title>{branding.pageTitle}</title>
-          <meta name="twitter:image:src" content={`${branding.baseUrl}/assets/cover.png?v=2.0.0-pre.0`} />
+          <meta name="twitter:image:src" content={branding.url('/assets/cover.png?v=2.0.0-pre.0')} />
           <meta name="twitter:site" content="@safrazik" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={branding.pageTitle} />
           <meta name="twitter:description" content={branding.description} />
 
-          <meta property="og:image" content={`${branding.baseUrl}/assets/cover.png?v=2.0.0-pre.0`} />
+          <meta property="og:image" content={branding.url('/assets/cover.png?v=2.0.0-pre.0')} />
           <meta property="og:site_name" content="GitHub" />
           <meta property="og:type" content="object" />
           <meta property="og:title" content={branding.pageTitle} />
-          <meta property="og:url" content={`${branding.baseUrl}`} />
+          <meta property="og:url" content={`${branding.url()}`} />
           <meta property="og:description" content={branding.description} />
         </Head>
         <ThemeProvider theme={theme}>

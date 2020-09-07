@@ -5,102 +5,64 @@ import { FileAgent as CoreFileAgent, FileAgentProps, FileRecord } from '@file-ag
 type CancelableEventReturnType = boolean | Promise<boolean> | undefined | null | void | any;
 type SlotValue = HTMLElement | string | undefined | null | any;
 
-let coreFileAgent: CoreFileAgent | undefined;
-
-export const FileAgent = (props: FileAgentProps) => {
-  // let containerOld: HTMLElement | undefined;
-  // const createCoreFileAgent = () => {
-  //   console.log('createCoreFileAgent');
-  //   if (!containerOld) {
-  //     return;
-  //   }
-  //   coreFileAgent = new CoreFileAgent(props);
-  //   // coreFileAgent.render(container);
-  // };
-
-  // const renderCore = () => {
-  //   if (!coreFileAgent) {
-  //     createCoreFileAgent();
-  //   } else {
-  //     console.log('coreFileAgent.setProps');
-  //     coreFileAgent.setProps(props);
-  //   }
-  //   coreFileAgent = new CoreFileAgent(props);
-  //   coreFileAgent.render(containerOld);
-  // };
-  // const setContainerOld = (el: HTMLElement | null) => {
-  //   console.log('setContainer', props.fileRecords);
-  //   containerOld = el as HTMLElement;
-  //   renderCore();
-  // };
-  const setContainer = (container: HTMLElement | null) => {
-    console.log('rendering................setContainer............................');
-    if (!coreFileAgent) {
-      coreFileAgent = new CoreFileAgent(props);
-    } else {
-      console.log('coreFileAgent.setProps');
-      coreFileAgent.setProps(props);
-    }
-    if (container) {
-      coreFileAgent.render(container);
-    }
-  };
-  console.log('rendering................LDLKDLDLKDJ>............................');
-  return React.createElement(
-    'div',
-    {
-      ref: setContainer,
-    },
-    ``,
-  );
-};
-
 export class FileAgentClass extends React.Component<FileAgentProps> {
   private $container?: HTMLElement;
-  private coreFileAgent?: CoreFileAgent;
-  // private coreRendered = false;
+  private coreFileAgent: CoreFileAgent;
+  private coreRendered = false;
   constructor(public props: FileAgentProps) {
     super(props);
-    console.log('lllllllllllllooooo');
+    console.log('reactFileAgent:constructor');
+    this.coreFileAgent = new CoreFileAgent(this.props);
     // fileIcon.render(document.getElementById('file-icon-wrapper') as HTMLElement);
   }
 
   setContainer(el: HTMLElement | null) {
-    console.log('setContainer', this.props.fileRecords);
+    console.log('reactFileAgent:setContainer', el === this.$container);
+    if (el === this.$container) {
+      return;
+    }
     this.$container = el as HTMLElement;
-    this.renderCore();
+    // this.renderCore();
+    // if (!this.$container) {
+    // }
+    if (this.$container) {
+      this.coreFileAgent.render(this.$container);
+    }
   }
 
-  createCoreFileAgent() {
-    console.log('createCoreFileAgent');
-    if (!this.$container) {
-      return;
-    }
-    this.coreFileAgent = new CoreFileAgent(this.props);
-    this.coreFileAgent.render(this.$container);
-  }
+  // createCoreFileAgent() {}
 
-  renderCore() {
-    if (/* this.coreRendered &&  */ this.coreFileAgent) {
-      console.log('this.coreFileAgent.setProps');
-      this.coreFileAgent.setProps(this.props);
-      return;
-    }
-    this.createCoreFileAgent();
-    // this.coreRendered = true;
+  // renderCore(updateUi?: boolean) {
+  //   console.log('reactFileAgent:renderCore');
+  //   this.createCoreFileAgent();
+  //   this.coreRendered = true;
+  // }
+
+  updateProps(updateUi?: boolean) {
+    this.coreFileAgent.setProps(this.props, updateUi);
   }
 
   componentDidMount() {
-    console.log('componentDidMount', this.props.fileRecords);
+    console.log(
+      'reactFileAgent:componentDidMount',
+      this.props.fileRecords?.map((fr) => fr.name()),
+    );
     // this.renderCore();
   }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.props.fileRecords);
-    // this.renderCore();
+    console.log(
+      'reactFileAgent:componentDidUpdate',
+      this.props.fileRecords?.map((fr) => fr.name()),
+    );
+    this.updateProps();
   }
 
   componentWillUnmount() {
+    console.log(
+      'reactFileAgent:componentWillUnmount',
+      this.props.fileRecords?.map((fr) => fr.name()),
+    );
     // destroy
   }
   render() {
@@ -115,5 +77,32 @@ export class FileAgentClass extends React.Component<FileAgentProps> {
   }
 }
 
-// export default FileAgent;
+// tslint:disable-next-line
+export class FileAgentClass2 extends React.Component<FileAgentProps> {
+  private $container?: HTMLElement;
+  private coreFileAgent: CoreFileAgent;
+  private coreRendered = false;
+  private containerRef: React.RefObject<HTMLDivElement>;
+  constructor(public props: FileAgentProps) {
+    super(props);
+    this.coreFileAgent = new CoreFileAgent(this.props);
+    this.containerRef = React.createRef();
+  }
+
+  updateProps(updateUi?: boolean) {
+    this.coreFileAgent.setProps(this.props, updateUi);
+  }
+
+  componentDidMount() {
+    this.coreFileAgent.render(this.containerRef.current as HTMLElement);
+  }
+
+  componentDidUpdate() {
+    this.updateProps();
+  }
+
+  render() {
+    return <div ref={this.containerRef}></div>;
+  }
+}
 export default FileAgentClass;

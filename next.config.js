@@ -24,6 +24,8 @@ module.exports = withMDX({
         },
       },
     });
+    // config.resolve.alias['vue'] = 'vue/dist/vue.esm.js';
+    config.resolve.alias['vue'] = path.resolve(__dirname, 'node_modules/vue/dist/vue.esm.js');
     if (dev) {
       // config.resolve.alias['@file-agent/core'] = path.resolve(__dirname, '../core/src');
       // config.resolve.alias['@file-agent/react'] = path.resolve(__dirname, '../react/src');

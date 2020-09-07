@@ -9,5 +9,6 @@ declare module 'vue/types/vue' {
     coreFileIcon?: CoreFileIcon;
     coreFilePreview?: CoreFilePreview;
     coreFileAgent?: CoreFileAgent;
+    coreFileAgentRendered?: boolean;
   }
 }

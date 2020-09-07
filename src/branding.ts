@@ -3,11 +3,11 @@ const basePath = '/file-agent-v2';
 const baseUrl = 'https://safrazik.com/file-agent';
 export default {
   basePath,
-  path(part: string) {
-    return basePath + part;
+  path(part?: string) {
+    return basePath + (part === undefined ? '' : part);
   },
-  url(part: string) {
-    return baseUrl + part;
+  url(part?: string) {
+    return baseUrl + (part === undefined ? '' : part);
   },
   pageTitle: 'File Agent',
   description:

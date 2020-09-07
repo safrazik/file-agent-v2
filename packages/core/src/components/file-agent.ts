@@ -7,12 +7,13 @@ import utils from '../lib/utils';
 // import uploader from '../lib/uploader/upload-helper';
 // import uploader from '../lib/uploader/uploader';
 import plugins from '../lib/plugins';
-import { FileAgentProps, filePreviewProps, createFileAgentProps } from '../lib/props';
+import { FileAgentProps, fileAgentProps, createFileAgentProps } from '../lib/props';
 import { ConfigureFn } from '../lib/uploader-interface';
 import { SortableManager, TransitionManager, ElementRect } from '../lib/sortable';
 
-let fileAgentEl: Element;
-let newFilePreviewEl: Element;
+// let fileAgentEl: Element;
+let templateString: string;
+// let newFilePreviewEl: Element;
 
 // tslint:disable-next-line
 var dragCounter = 0;
@@ -25,7 +26,10 @@ interface CachedItem {
   child: HTMLElement;
 }
 
+const propKeys = Object.keys(fileAgentProps);
+
 export class FileAgent extends Component {
+  private sortableManager?: SortableManager<FileRecord[]>;
   private cachedItems: CachedItem[] = [];
   isDragging = false;
   isSorting = false;
@@ -43,9 +47,42 @@ export class FileAgent extends Component {
     return this.$props;
   }
 
-  setProps(props: FileAgentProps, updateUi = true) {
+  setProps(props: FileAgentProps, updateUi?: boolean) {
+    if (updateUi === undefined) {
+      let hasChanges = false;
+      // calculate changes
+      // hasChanges = true; // @TODO implement
+      for (const key in props) {
+        if (key.indexOf('on') === 0) {
+          // skip methods
+          continue;
+        }
+        if (propKeys.indexOf(key) === -1) {
+          // skip unknown props
+          continue;
+        }
+        if ((this.$props as any)[key] !== (props as any)[key]) {
+          hasChanges = true;
+          updateUi = true;
+          break;
+        }
+      }
+      console.log(
+        'hasChanges',
+        hasChanges,
+        hasChanges ? 'YES' : 'no changes, baby...',
+        this.$props.fileRecords,
+        props.fileRecords
+      );
+      if (!hasChanges) {
+        return;
+      }
+    }
     this.$props = createFileAgentProps(props, this.$props);
     this.$props.fileRecords = this.$props.fileRecords || [];
+    if (updateUi === false) {
+      return;
+    }
     if (updateUi) {
       this.update();
     }
@@ -77,6 +114,21 @@ export class FileAgent extends Component {
       return this.$props.helpText;
     }
     return 'Choose ' + (this.hasMultiple ? 'files' : 'file') + ' or drag & drop here';
+  }
+
+  private fileRecordsChanged() {
+    if (this.$props.onChange) {
+      const fileRecords = this.$props.fileRecords.slice();
+      this.$props.fileRecords = fileRecords;
+      this.$props.onChange(this.$props.fileRecords);
+    }
+  }
+
+  public setFileRecords(fileRecords: FileRecord[], triggerOnChange = true) {
+    this.setProps({ fileRecords }, false);
+    if (triggerOnChange) {
+      this.fileRecordsChanged();
+    }
   }
 
   getCachedItemForFileRecord(fileRecord: FileRecord) {
@@ -369,6 +421,8 @@ export class FileAgent extends Component {
         this.$props.onSelect(fileRecords);
       }
 
+      this.fileRecordsChanged();
+
       /*       FileRecord.readFiles(fileRecords).then((fileRecordsNew: FileRecord[]) => {
         // const allFileRecordsRaw = FileRecord.toRawArray(this.$props.fileRecords);
         // this.rawFileRecords = allFileRecordsRaw;
@@ -414,10 +468,6 @@ export class FileAgent extends Component {
     return div.innerHTML;
   }
 
-  getRef<T extends HTMLElement>(ref: string, el?: Element): T {
-    return ((el || this.$el).querySelector('[data-ref="' + ref + '"]') as T) || document.createElement('span');
-  }
-
   getSlot<T extends HTMLElement>(slot: string): T {
     return this.$el.querySelector('[data-slot="' + slot + '"]') as T;
   }
@@ -442,10 +492,12 @@ export class FileAgent extends Component {
         return this.$props.onDelete(fr);
       },
       () => {
+        this.fileRecordsChanged();
         // no op
       },
       () => {
         this.cancelDeleteFileRecord(fileRecord, index);
+        this.fileRecordsChanged();
       }
     );
   }
@@ -776,12 +828,13 @@ export class FileAgent extends Component {
     this.updateWrapper();
     const container = this.getRef('file-preview-list');
     if (!(this as any).isAddedNewFilePreview) {
-      container.innerHTML = '';
+      // container.innerHTML = '';
       const slotContent = this.getSlotContent('filePreviewNew');
       if (slotContent) {
         container.appendChild(slotContent);
       } else {
-        container.appendChild(newFilePreviewEl);
+        // container.appendChild(newFilePreviewEl);
+        container.appendChild(this.getRef('file-preview-new'));
       }
       (this as any).isAddedNewFilePreview = true;
     }
@@ -795,15 +848,12 @@ export class FileAgent extends Component {
     const fileRecords = this.$props.fileRecords.concat([]).reverse();
     const newChildren: HTMLElement[] = [];
     const otherChildren: HTMLElement[] = [];
-    const childRects: ElementRect[] = [];
+    let childRects: ElementRect[] = [];
     const enableTransitions = true;
     // const enableTransitions = false;
     if (enableTransitions) {
       // tslint:disable-next-line
-      for (let i = 0; i < container.children.length; i++) {
-        const child = container.children[i] as HTMLElement;
-        childRects.push({ element: child, rect: child.getBoundingClientRect() });
-      }
+      childRects = TransitionManager.getElementRects(container.children);
     }
     let index = -1;
     for (const fileRecord of fileRecords) {
@@ -861,21 +911,27 @@ export class FileAgent extends Component {
         // (fileRecord as any)._filePreview = filePreview;
         fileRecord.onChange.progress = () => {
           filePreview?.updateProgress();
+          this.fileRecordsChanged();
         };
         fileRecord.onChange.name = () => {
           filePreview?.updateName();
+          this.fileRecordsChanged();
         };
         fileRecord.onChange.url = () => {
           filePreview?.updateUrl();
+          this.fileRecordsChanged();
         };
         fileRecord.onChange.thumbnail = () => {
           filePreview?.updateThumbnail();
+          this.fileRecordsChanged();
         };
         fileRecord.onChange.dimensions = () => {
           filePreview?.updateDimensions();
+          this.fileRecordsChanged();
         };
         fileRecord.onChange.error = () => {
           filePreview?.updateError();
+          this.fileRecordsChanged();
         };
         newChildren.push(child);
         // } else {
@@ -908,12 +964,51 @@ export class FileAgent extends Component {
       transitionManager = new TransitionManager(this.$props.layout);
       transitionManager.applyTransitions(newChildren, removedChildren, otherChildren.concat(newFileChild), childRects);
     }
-    const sortableManager = new SortableManager(
-      container,
-      removedChildren,
-      [container.lastElementChild as HTMLElement /* new file preview */],
-      transitionManager
-    );
+    if (this.sortableManager) {
+      this.sortableManager.disable();
+    } else {
+      this.sortableManager = new SortableManager<FileRecord[]>(container, transitionManager);
+    }
+    const sortableManager = this.sortableManager;
+    sortableManager.setElements(container, removedChildren, [
+      container.lastElementChild as HTMLElement /* new file preview */,
+    ]);
+    // this.sortableManager = sortableManager;
+    // sortableManager.onSort = (oldIndex, newIndex, sorter) => {
+    //   const sortedFileRecords = sorter(this.$props.fileRecords);
+    //   // sortedFileRecords = utils.arrayMove(this.$props.fileRecords, oldIndex, newIndex);
+    //   console.log(
+    //     'sortableManager onChange',
+    //     oldIndex,
+    //     newIndex,
+    //     this.$props.fileRecords.map((fr) => {
+    //       return fr.name();
+    //     }),
+    //     sortedFileRecords.map((fr) => fr.name())
+    //   );
+    //   // this.setFileRecords(sortedFileRecords);
+    //   if (this.$props.onSort) {
+    //     this.$props.onSort(this.$props.fileRecords);
+    //   }
+    // };
+    sortableManager.onSortEnd = (oldIndex, newIndex, sorter) => {
+      const sortedFileRecords = sorter(this.$props.fileRecords);
+      // sortedFileRecords = utils.arrayMove(this.$props.fileRecords, oldIndex, newIndex);
+      console.log(
+        'sortableManager onChange END',
+        oldIndex,
+        newIndex,
+        this.$props.fileRecords.map((fr) => {
+          return fr.name();
+        }),
+        // sortedFileRecords,
+        sortedFileRecords.map((fr) => fr.name())
+      );
+      this.setFileRecords(sortedFileRecords);
+      if (this.$props.onSort) {
+        this.$props.onSort(this.$props.fileRecords);
+      }
+    };
     if (this.$props.sortable) {
       const handle = document.createElement('span');
       if (this.$props.sortable === 'handle') {
@@ -947,9 +1042,7 @@ export class FileAgent extends Component {
     input.onchange = (event) => {
       this.filesChanged(event as InputEvent);
     };
-    if (this.$props.onChange) {
-      this.$props.onChange(this.$props.fileRecords);
-    }
+    // this.fileRecordsChanged();
   }
 
   get $el(): HTMLElement {
@@ -959,17 +1052,20 @@ export class FileAgent extends Component {
     // let el?: HTMLElement;
     // if (!el) {
     // const el = document.createElement('div');
-    if (!fileAgentEl) {
-      const templateString = template.replace(/\<icon name="(.+?)"><\/icon>/g, (match: string, name: string) => {
+    if (!templateString) {
+      templateString = template.replace(/\<icon name="(.+?)"><\/icon>/g, (match: string, name: string) => {
         return this.iconByName(name);
       });
-      fileAgentEl = this.parseTemplate(templateString);
     }
-    const el = fileAgentEl.cloneNode(true) as HTMLElement;
-    newFilePreviewEl = this.getRef('file-preview-new', el);
+    // if (!fileAgentEl) {
+    //   fileAgentEl = this.parseTemplate(templateString);
+    // }
+    // const el = fileAgentEl.cloneNode(true) as HTMLElement;
+    const el = this.parseTemplate(templateString);
+    // newFilePreviewEl = this.getRef('file-preview-new', el);
     this.cachedEl = el; // important to avoid recursion because this getter is called in update method
     const uniqueId = new Date().getTime().toString(36) + Math.random().toString(36).slice(2);
-    el.id = 'vfa-' + uniqueId;
+    el.id = 'fa-' + uniqueId;
 
     this.update();
     this.bindEvents();

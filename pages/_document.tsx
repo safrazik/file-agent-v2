@@ -2,6 +2,7 @@ import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/core/styles';
 import theme from '../src/theme';
+import branding from 'src/branding';
 
 const themeColor = (theme as any).palette.primary.main;
 
@@ -13,7 +14,7 @@ export default class DocsDocument extends Document {
           {/* PWA primary color */}
           <meta name="theme-color" content={themeColor} />
 
-          <link rel="icon" type="image/png" href="/assets/icon.png" />
+          <link rel="icon" type="image/png" href={branding.path('/assets/icon.png')} />
 
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
           {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}

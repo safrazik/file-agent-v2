@@ -23,7 +23,7 @@ interface RequiredProp<T> {
   required: true;
 }
 
-const createProp = <T>(typeString: TypeString, Type: any, defaultValue?: T): Prop<T> => {
+const createProp = <T>(typeString: TypeString, Type?: any, defaultValue?: T): Prop<T> => {
   return {
     type: Type as PropType<T>,
     typeString,
@@ -108,6 +108,7 @@ export interface FileAgentProps {
   onBeforeRename?: (fileRecord: FileRecord) => CancelableEventReturnType;
   onRename?: (fileRecord: FileRecord) => CancelableEventReturnType;
   onChange?: (fileRecords: FileRecord[]) => void;
+  onSort?: (fileRecords: FileRecord[]) => void;
   onSelect?: (fileRecords: FileRecord[]) => void;
   onUpload?: (fileRecord: FileRecord[], result: any) => void;
   onUploadError?: (fileRecord: FileRecord[], result: any) => void;
@@ -202,6 +203,7 @@ export const createFileAgentProps = (
         onBeforeRename: undefined,
         onRename: undefined,
         onChange: undefined,
+        onSort: undefined,
         onSelect: undefined,
         onUpload: undefined,
         onUploadError: undefined,
@@ -257,7 +259,8 @@ export const fileAgentProps = {
   smartBackground: booleanProp(fileAgentPropsDefaults.smartBackground),
   layout: createProp<Layout>('string', String),
   theme: createProp<Theme>('string', String),
-  sortable: createProp<boolean | 'hold' | 'handle'>('string', String),
+  // sortable: createProp<boolean | 'hold' | 'handle'>('any', Object),
+  sortable: createProp<boolean | 'hold' | 'handle'>('any'),
   meta: booleanProp(fileAgentPropsDefaults.meta),
   compact: booleanProp(fileAgentPropsDefaults.compact),
   deletable: booleanProp(fileAgentPropsDefaults.deletable),
@@ -283,6 +286,7 @@ export const fileAgentProps = {
   onBeforeRename: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
   onRename: functionProp<(fileRecord: FileRecord) => CancelableEventReturnType>(),
   onChange: functionProp<(fileRecords: FileRecord[]) => void>(),
+  onSort: functionProp<(fileRecords: FileRecord[]) => void>(),
   onSelect: functionProp<(fileRecords: FileRecord[]) => void>(),
   onUpload: functionProp<(fileRecord: FileRecord[], result: any) => void>(),
   onUploadError: functionProp<(fileRecord: FileRecord[], result: any) => void>(),
