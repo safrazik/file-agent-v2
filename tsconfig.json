@@ -15,6 +15,6 @@
     "packages/core/src/demo",
     "packages/react/src/demo",
     "packages/uploader/src/demo",
-    "packages/vue"
+    "packages/vue/src/demo"
   ]
 }
